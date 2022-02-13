@@ -1,5 +1,6 @@
 import { extendType, objectType, stringArg } from "nexus";
 import { Context } from "../context";
+import { Sepa } from "./sepa";
 
 export const User = objectType({
     name: "User",
@@ -9,8 +10,16 @@ export const User = objectType({
         t.nonNull.string("username");
         t.nonNull.string("firstName");
         t.nonNull.string("lastName");
-        t.field("lastSignin", { type: "DateTime" });
-        t.field("createdAt", {type: "DateTime"});     
+        t.nonNull.field("lastSignin", { type: "DateTime" });
+        t.nonNull.field("createdAt", {type: "DateTime"});    
+        t.field("sepa", { 
+            type: Sepa,
+            resolve(parent, args, { prisma }: Context) {
+                return prisma.sepa.findUnique({
+                    where: { userId: parent.id }
+                });
+            }
+        }); 
     },
 });
 

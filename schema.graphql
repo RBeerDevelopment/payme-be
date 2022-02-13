@@ -22,12 +22,25 @@ type Query {
   users: [User]!
 }
 
+type Sepa {
+  bank: String!
+  bic: String!
+  iban: String!
+  id: ID!
+  user: User
+}
+
+type SepaPayload {
+  iban: String!
+}
+
 type User {
-  createdAt: DateTime
+  createdAt: DateTime!
   email: String!
   firstName: String!
   id: ID!
   lastName: String!
-  lastSignin: DateTime
+  lastSignin: DateTime!
+  sepa: Sepa
   username: String!
 }

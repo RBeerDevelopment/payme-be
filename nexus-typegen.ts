@@ -5,6 +5,7 @@
 
 
 import type { Context } from "./src/context"
+import type { ValidateResolver } from "nexus-validate"
 import type { core } from "nexus"
 declare global {
   interface NexusGenCustomInputMethods<TypeName extends string> {
@@ -50,13 +51,23 @@ export interface NexusGenObjects {
   }
   Mutation: {};
   Query: {};
+  Sepa: { // root type
+    bank: string; // String!
+    bic: string; // String!
+    iban: string; // String!
+    id: string; // ID!
+    user?: NexusGenRootTypes['User'] | null; // User
+  }
+  SepaPayload: { // root type
+    iban: string; // String!
+  }
   User: { // root type
-    createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
     email: string; // String!
     firstName: string; // String!
     id: string; // ID!
     lastName: string; // String!
-    lastSignin?: NexusGenScalars['DateTime'] | null; // DateTime
+    lastSignin: NexusGenScalars['DateTime']; // DateTime!
     username: string; // String!
   }
 }
@@ -84,13 +95,24 @@ export interface NexusGenFieldTypes {
     user: NexusGenRootTypes['User'] | null; // User
     users: Array<NexusGenRootTypes['User'] | null>; // [User]!
   }
+  Sepa: { // field return type
+    bank: string; // String!
+    bic: string; // String!
+    iban: string; // String!
+    id: string; // ID!
+    user: NexusGenRootTypes['User'] | null; // User
+  }
+  SepaPayload: { // field return type
+    iban: string; // String!
+  }
   User: { // field return type
-    createdAt: NexusGenScalars['DateTime'] | null; // DateTime
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
     email: string; // String!
     firstName: string; // String!
     id: string; // ID!
     lastName: string; // String!
-    lastSignin: NexusGenScalars['DateTime'] | null; // DateTime
+    lastSignin: NexusGenScalars['DateTime']; // DateTime!
+    sepa: NexusGenRootTypes['Sepa'] | null; // Sepa
     username: string; // String!
   }
 }
@@ -108,6 +130,16 @@ export interface NexusGenFieldTypeNames {
     user: 'User'
     users: 'User'
   }
+  Sepa: { // field return type name
+    bank: 'String'
+    bic: 'String'
+    iban: 'String'
+    id: 'ID'
+    user: 'User'
+  }
+  SepaPayload: { // field return type name
+    iban: 'String'
+  }
   User: { // field return type name
     createdAt: 'DateTime'
     email: 'String'
@@ -115,6 +147,7 @@ export interface NexusGenFieldTypeNames {
     id: 'ID'
     lastName: 'String'
     lastSignin: 'DateTime'
+    sepa: 'Sepa'
     username: 'String'
   }
 }
@@ -203,6 +236,10 @@ declare global {
   interface NexusGenPluginInputTypeConfig<TypeName extends string> {
   }
   interface NexusGenPluginFieldConfig<TypeName extends string, FieldName extends string> {
+    /**
+     * Validate mutation arguments.
+     */
+    validate?: ValidateResolver<TypeName, FieldName>
   }
   interface NexusGenPluginInputFieldConfig<TypeName extends string, FieldName extends string> {
   }

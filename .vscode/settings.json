@@ -8,6 +8,7 @@
         "typescript",
         "typescriptreact"
     ],
+    "eslint.packageManager": "yarn",
     "git.postCommitCommand": "push",
     "diffEditor.ignoreTrimWhitespace": false
 }
