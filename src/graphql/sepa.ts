@@ -1,4 +1,5 @@
-import { extendType, nonNull, nullable, objectType, stringArg } from "nexus";
+import { PrismaClient } from "@prisma/client";
+import { extendType, intArg, nonNull, nullable, objectType, stringArg } from "nexus";
 import { Context } from "../context";
 import { getIbanInfo } from "../validation";
 import { User } from "./user";
@@ -29,16 +30,12 @@ export const SepaMutation = extendType({
                 const { prisma, userId } = context;
                 const { iban, accountName } = args;
 
-                if (!userId) {
-                    throw new Error("User not signed in.");
-                }
+                await hasAccess(userId);
 
                 const ibanInfo = await getIbanInfo(iban);
                 if(!ibanInfo) {
                     throw new Error("Invalid IBAN.");
                 }
-
-                console.log({ ibanInfo });
                 const sepa = await prisma.sepa.create({
                     data: {
                         iban: ibanInfo.iban,
@@ -55,6 +52,107 @@ export const SepaMutation = extendType({
 
                 return(sepa);
             }
+        }),
+        t.field("updateSepa", {
+            type: "Sepa",
+            args: {
+                id: nonNull(intArg()),
+                accountName: nullable(stringArg()),
+                iban: nullable(stringArg()),
+                bic: nullable(stringArg()),
+                bankName: nullable(stringArg())
+            },
+            async resolve(parent, args, context: Context) {
+                const { prisma, userId } = context;
+                const { id, accountName, iban, bic, bankName } = args;
+
+                await hasAccess(userId, id, prisma);
+
+                if(!iban) {
+                    const newSepa = await prisma.sepa.update({
+                        where: {
+                            id
+                        },
+                        data: {
+                            accountName,
+                            bic,
+                            bankName
+                        }
+                    });
+
+                    return newSepa;
+                }
+                
+                const ibanInfo = await getIbanInfo(iban);
+                if(!ibanInfo) {
+                    throw new Error("Invalid IBAN.");
+                }
+
+                const newSepa = await prisma.sepa.update({
+                    where: {
+                        id
+                    },
+                    data: {
+                        iban: ibanInfo.iban,
+                        // check if there is a way to validate a bic
+                        bic: bic ? bic : ibanInfo.bic,
+                        bankName: bankName ? bankName : ibanInfo.bankName,
+                        accountName
+                    }
+                });
+
+                return newSepa;
+            }
+        }),
+        t.field("deleteSepa", {
+            type: "Sepa",
+            args: {
+                id: nonNull(intArg())
+            },
+            async resolve(parent, args, context: Context) {
+                const { prisma, userId } = context;
+                const { id } = args;
+
+                await hasAccess(userId, id, prisma);
+                
+                const sepa = await prisma.sepa.delete({
+                    where: { id }
+                });
+
+                return(sepa);
+            }
         });
-    }
+
+    },
 });
+
+async function hasAccess(userId: number | undefined, sepaId?: number, prisma?: PrismaClient): Promise<boolean> {
+
+    if(!userId) {
+        throw new Error("User not signed in.");
+    }
+
+    console.log({ userId });
+
+    if(!sepaId) {
+        return true;
+    } 
+
+    if(!prisma) {
+        throw new Error("Internal Error, missing DB client");
+    }
+
+    console.log({ sepaId });
+
+    const currentSepa = await prisma.sepa.findUnique({ where: { id: sepaId }});
+
+    console.log({ sepaUserId: currentSepa?.userId, userId });
+    if(currentSepa?.userId !== userId) {
+        console.log({ sepaUserId: currentSepa?.userId, userId });
+
+        throw new Error("No access to edit this SEPA account.");
+    }
+
+    return true;
+                
+}

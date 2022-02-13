@@ -86,8 +86,10 @@ export interface NexusGenFieldTypes {
   }
   Mutation: { // field return type
     addSepa: NexusGenRootTypes['Sepa'] | null; // Sepa
+    deleteSepa: NexusGenRootTypes['Sepa'] | null; // Sepa
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     signup: NexusGenRootTypes['AuthPayload']; // AuthPayload!
+    updateSepa: NexusGenRootTypes['Sepa'] | null; // Sepa
   }
   Query: { // field return type
     user: NexusGenRootTypes['User'] | null; // User
@@ -120,8 +122,10 @@ export interface NexusGenFieldTypeNames {
   }
   Mutation: { // field return type name
     addSepa: 'Sepa'
+    deleteSepa: 'Sepa'
     login: 'AuthPayload'
     signup: 'AuthPayload'
+    updateSepa: 'Sepa'
   }
   Query: { // field return type name
     user: 'User'
@@ -153,6 +157,9 @@ export interface NexusGenArgTypes {
       accountName?: string | null; // String
       iban: string; // String!
     }
+    deleteSepa: { // args
+      id: number; // Int!
+    }
     login: { // args
       password: string; // String!
       username: string; // String!
@@ -163,6 +170,13 @@ export interface NexusGenArgTypes {
       lastName: string; // String!
       password: string; // String!
       username: string; // String!
+    }
+    updateSepa: { // args
+      accountName?: string | null; // String
+      bankName?: string | null; // String
+      bic?: string | null; // String
+      iban?: string | null; // String
+      id: number; // Int!
     }
   }
   Query: {

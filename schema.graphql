@@ -14,8 +14,10 @@ scalar DateTime
 
 type Mutation {
   addSepa(accountName: String, iban: String!): Sepa
+  deleteSepa(id: Int!): Sepa
   login(password: String!, username: String!): AuthPayload!
   signup(email: String!, firstName: String!, lastName: String!, password: String!, username: String!): AuthPayload!
+  updateSepa(accountName: String, bankName: String, bic: String, iban: String, id: Int!): Sepa
 }
 
 type Query {
