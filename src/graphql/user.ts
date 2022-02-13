@@ -12,10 +12,10 @@ export const User = objectType({
         t.nonNull.string("lastName");
         t.nonNull.field("lastSignin", { type: "DateTime" });
         t.nonNull.field("createdAt", {type: "DateTime"});    
-        t.field("sepa", { 
+        t.nonNull.list.field("sepa", { 
             type: Sepa,
             resolve(parent, args, { prisma }: Context) {
-                return prisma.sepa.findUnique({
+                return prisma.sepa.findMany({
                     where: { userId: parent.id }
                 });
             }

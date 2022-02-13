@@ -2963,6 +2963,11 @@ onetime@^5.1.2:
   dependencies:
     mimic-fn "^2.1.0"
 
+openiban@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/openiban/-/openiban-1.0.1.tgz#b3ed9bb8d9bf30e8e6f413f4ae70747216b01866"
+  integrity sha512-h1O8C7SS/UG/qZHXF1lZLDUcQ7eShuqVzy5mqEsygBY5PoT3bAVr7JXmZYLO+ujlrO+xli4VvbM3qGSiNh4CAg==
+
 optionator@^0.9.1:
   version "0.9.1"
   resolved "https://registry.npmjs.org/optionator/-/optionator-0.9.1.tgz"

@@ -19,20 +19,21 @@ model User {
   lastName     String
   username     String   @unique
   email        String   @unique
-  passwordHash String   @default("-1")
+  passwordHash String
   lastSignin   DateTime @default(now())
   createdAt    DateTime @default(now())
-  sepa         Sepa?
+  sepa         Sepa[]
   Paypal       Paypal?
 }
 
 model Sepa {
-  id     Int    @id @default(autoincrement())
-  iban   String
-  bic    String
-  bank   String
-  user   User   @relation(fields: [userId], references: [id])
-  userId Int    @unique
+  id          Int    @id @default(autoincrement())
+  accountName String?
+  iban        String
+  bic         String
+  bankName    String
+  User        User?  @relation(fields: [userId], references: [id])
+  userId      Int?
 }
 
 model Paypal {

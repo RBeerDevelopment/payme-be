@@ -13,6 +13,7 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `dat
 scalar DateTime
 
 type Mutation {
+  addSepa(accountName: String, iban: String!): Sepa
   login(password: String!, username: String!): AuthPayload!
   signup(email: String!, firstName: String!, lastName: String!, password: String!, username: String!): AuthPayload!
 }
@@ -23,15 +24,12 @@ type Query {
 }
 
 type Sepa {
-  bank: String!
+  accountName: String
+  bankName: String!
   bic: String!
   iban: String!
   id: ID!
   user: User
-}
-
-type SepaPayload {
-  iban: String!
 }
 
 type User {
@@ -41,6 +39,6 @@ type User {
   id: ID!
   lastName: String!
   lastSignin: DateTime!
-  sepa: Sepa
+  sepa: [Sepa]!
   username: String!
 }

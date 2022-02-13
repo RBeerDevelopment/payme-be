@@ -3,7 +3,8 @@ import jwt from "jsonwebtoken";
 
 import { extendType, nonNull, objectType, stringArg } from "nexus";
 import { Context } from "../context";
-import { APP_SECRET, getNowAsISO, validateEmailAddress, validatePassword } from "../utils";
+import { APP_SECRET, getNowAsISO, oneHourFromNow } from "../utils";
+import { validateEmailAddress, validatePassword } from "../validation";
 
 export const AuthPayload = objectType({
     name: "AuthPayload",
@@ -44,7 +45,10 @@ export const AuthMutation = extendType({
                     throw new Error("Invalid password");
                 }
 
-                const token = jwt.sign({ userId: user.id }, APP_SECRET);
+                const token = jwt.sign({ 
+                    userId: user.id,
+                    exp: oneHourFromNow()
+                }, APP_SECRET);
 
                 prisma.user.update({
                     where: { id: user.id },
@@ -88,7 +92,11 @@ export const AuthMutation = extendType({
                     },
                 });
 
-                const token = jwt.sign({ userId: user.id }, APP_SECRET);
+                const token = jwt.sign({ 
+                    userId: user.id,
+                    exp: oneHourFromNow()
+                }, APP_SECRET);
+                
                 return {
                     token,
                     user,

@@ -5,7 +5,6 @@
 
 
 import type { Context } from "./src/context"
-import type { ValidateResolver } from "nexus-validate"
 import type { core } from "nexus"
 declare global {
   interface NexusGenCustomInputMethods<TypeName extends string> {
@@ -52,14 +51,12 @@ export interface NexusGenObjects {
   Mutation: {};
   Query: {};
   Sepa: { // root type
-    bank: string; // String!
+    accountName?: string | null; // String
+    bankName: string; // String!
     bic: string; // String!
     iban: string; // String!
     id: string; // ID!
     user?: NexusGenRootTypes['User'] | null; // User
-  }
-  SepaPayload: { // root type
-    iban: string; // String!
   }
   User: { // root type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -88,6 +85,7 @@ export interface NexusGenFieldTypes {
     user: NexusGenRootTypes['User']; // User!
   }
   Mutation: { // field return type
+    addSepa: NexusGenRootTypes['Sepa'] | null; // Sepa
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     signup: NexusGenRootTypes['AuthPayload']; // AuthPayload!
   }
@@ -96,14 +94,12 @@ export interface NexusGenFieldTypes {
     users: Array<NexusGenRootTypes['User'] | null>; // [User]!
   }
   Sepa: { // field return type
-    bank: string; // String!
+    accountName: string | null; // String
+    bankName: string; // String!
     bic: string; // String!
     iban: string; // String!
     id: string; // ID!
     user: NexusGenRootTypes['User'] | null; // User
-  }
-  SepaPayload: { // field return type
-    iban: string; // String!
   }
   User: { // field return type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -112,7 +108,7 @@ export interface NexusGenFieldTypes {
     id: string; // ID!
     lastName: string; // String!
     lastSignin: NexusGenScalars['DateTime']; // DateTime!
-    sepa: NexusGenRootTypes['Sepa'] | null; // Sepa
+    sepa: Array<NexusGenRootTypes['Sepa'] | null>; // [Sepa]!
     username: string; // String!
   }
 }
@@ -123,6 +119,7 @@ export interface NexusGenFieldTypeNames {
     user: 'User'
   }
   Mutation: { // field return type name
+    addSepa: 'Sepa'
     login: 'AuthPayload'
     signup: 'AuthPayload'
   }
@@ -131,14 +128,12 @@ export interface NexusGenFieldTypeNames {
     users: 'User'
   }
   Sepa: { // field return type name
-    bank: 'String'
+    accountName: 'String'
+    bankName: 'String'
     bic: 'String'
     iban: 'String'
     id: 'ID'
     user: 'User'
-  }
-  SepaPayload: { // field return type name
-    iban: 'String'
   }
   User: { // field return type name
     createdAt: 'DateTime'
@@ -154,6 +149,10 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    addSepa: { // args
+      accountName?: string | null; // String
+      iban: string; // String!
+    }
     login: { // args
       password: string; // String!
       username: string; // String!
@@ -236,10 +235,6 @@ declare global {
   interface NexusGenPluginInputTypeConfig<TypeName extends string> {
   }
   interface NexusGenPluginFieldConfig<TypeName extends string, FieldName extends string> {
-    /**
-     * Validate mutation arguments.
-     */
-    validate?: ValidateResolver<TypeName, FieldName>
   }
   interface NexusGenPluginInputFieldConfig<TypeName extends string, FieldName extends string> {
   }
