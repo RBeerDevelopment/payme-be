@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": "yarn generate-typing && prisma generate && serverless offline start",
+    "dev": "serverless offline start",
     "deploy-staging": "prisma generate && serverless deploy --stage staging",
-    "generate-typing": "ts-node --transpile-only src/schema.ts"
+    "generate": "ts-node --transpile-only src/schema.ts && prisma generate"
   },
   "keywords": [],
   "author": "Robin Beer",
@@ -17,8 +17,6 @@
     "apollo-server-lambda": "^3.6.2",
     "bcryptjs": "^2.4.3",
     "express": "^4.17.2",
-    "graphql": "^15.5.0",
-    "graphql-scalars": "^1.14.1",
     "graphql-subscriptions": "^1.2.1",
     "jsonwebtoken": "^8.5.1",
     "nexus": "^1.2.0",
@@ -26,9 +24,11 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
+    "@types/graphql-iso-date": "^3.4.0",
     "@typescript-eslint/eslint-plugin": "^5.10.2",
     "@typescript-eslint/parser": "^5.10.2",
     "eslint": "^8.8.0",
+    "graphql-iso-date": "^3.6.1",
     "prisma": "^3.9.1",
     "serverless-dotenv-plugin": "^3.12.2",
     "serverless-offline": "^8.4.0",

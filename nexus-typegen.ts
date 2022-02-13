@@ -51,10 +51,12 @@ export interface NexusGenObjects {
   Mutation: {};
   Query: {};
   User: { // root type
+    createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
     email: string; // String!
     firstName: string; // String!
     id: string; // ID!
     lastName: string; // String!
+    lastSignin?: NexusGenScalars['DateTime'] | null; // DateTime
     username: string; // String!
   }
 }
@@ -79,13 +81,16 @@ export interface NexusGenFieldTypes {
     signup: NexusGenRootTypes['AuthPayload']; // AuthPayload!
   }
   Query: { // field return type
+    user: NexusGenRootTypes['User'] | null; // User
     users: Array<NexusGenRootTypes['User'] | null>; // [User]!
   }
   User: { // field return type
+    createdAt: NexusGenScalars['DateTime'] | null; // DateTime
     email: string; // String!
     firstName: string; // String!
     id: string; // ID!
     lastName: string; // String!
+    lastSignin: NexusGenScalars['DateTime'] | null; // DateTime
     username: string; // String!
   }
 }
@@ -100,13 +105,16 @@ export interface NexusGenFieldTypeNames {
     signup: 'AuthPayload'
   }
   Query: { // field return type name
+    user: 'User'
     users: 'User'
   }
   User: { // field return type name
+    createdAt: 'DateTime'
     email: 'String'
     firstName: 'String'
     id: 'ID'
     lastName: 'String'
+    lastSignin: 'DateTime'
     username: 'String'
   }
 }
@@ -123,6 +131,11 @@ export interface NexusGenArgTypes {
       lastName: string; // String!
       password: string; // String!
       username: string; // String!
+    }
+  }
+  Query: {
+    user: { // args
+      username?: string | null; // String
     }
   }
 }

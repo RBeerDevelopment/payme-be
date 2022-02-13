@@ -1,22 +1,26 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+
+// defaults need to be added to every feld to avoid error after schema is updated
+
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 generator client {
   provider        = "prisma-client-js"
   binaryTargets   = ["native", "rhel-openssl-1.0.x"]
-  previewFeatures = ["mongoDb"]
 }
 
 model User {
-  id           String @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  id           Int @id @default(autoincrement())
   firstName    String
   lastName     String
   username     String @unique
-  email        String @unique
-  passwordHash String
+  email        String @unique 
+  passwordHash String @default("-1")
+  lastSignin   DateTime @default(now())
+  createdAt    DateTime @default(now())
 }

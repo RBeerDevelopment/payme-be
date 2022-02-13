@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { decodeAuthHeader } from "./utils";
-import { Request } from "express";
+import { ExpressContext } from "apollo-server-express";
 
 export const prisma = new PrismaClient();
 
@@ -9,7 +9,9 @@ export interface Context {
     userId?: number
 }
 
-export function context({ req }: { req: Request }): Context {
+export function context({ express }: { express: ExpressContext }): Context {
+
+    const req = express.req;
     const token =
         req && req.headers.authorization ? decodeAuthHeader(req.headers.authorization)
             : null;

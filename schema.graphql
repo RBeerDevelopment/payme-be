@@ -18,13 +18,16 @@ type Mutation {
 }
 
 type Query {
+  user(username: String): User
   users: [User]!
 }
 
 type User {
+  createdAt: DateTime
   email: String!
   firstName: String!
   id: ID!
   lastName: String!
+  lastSignin: DateTime
   username: String!
 }

@@ -1,0 +1,13 @@
+{
+    "editor.suggestSelection": "first",
+    // Set the default=
+    "editor.codeActionsOnSave": [
+        "source.fixAll.eslint"
+    ],
+    "eslint.validate": [
+        "typescript",
+        "typescriptreact"
+    ],
+    "git.postCommitCommand": "push",
+    "diffEditor.ignoreTrimWhitespace": false
+}
