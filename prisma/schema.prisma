@@ -4,8 +4,9 @@
 // defaults need to be added to every feld to avoid error after schema is updated
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 generator client {
@@ -37,7 +38,7 @@ model Sepa {
 }
 
 model Paypal {
-  id          Int @id @default(autoincrement())
+  id          Int    @id @default(autoincrement())
   username    String
   accountName String
   user        User?  @relation(fields: [userId], references: [id])
