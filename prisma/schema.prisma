@@ -23,7 +23,7 @@ model User {
   lastSignin   DateTime @default(now())
   createdAt    DateTime @default(now())
   sepa         Sepa[]
-  Paypal       Paypal?
+  Paypal       Paypal[]
 }
 
 model Sepa {
@@ -32,13 +32,14 @@ model Sepa {
   iban        String
   bic         String
   bankName    String
-  User        User?   @relation(fields: [userId], references: [id])
+  user        User?   @relation(fields: [userId], references: [id])
   userId      Int?
 }
 
 model Paypal {
-  username    String @id
+  id          Int @id @default(autoincrement())
+  username    String
   accountName String
-  user        User   @relation(fields: [userId], references: [id])
-  userId      Int    @unique
+  user        User?  @relation(fields: [userId], references: [id])
+  userId      Int?
 }

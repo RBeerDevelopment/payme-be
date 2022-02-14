@@ -1,4 +1,5 @@
 import { extendType, objectType, stringArg } from "nexus";
+import { Paypal } from ".";
 import { Context } from "../context";
 import { Sepa } from "./sepa";
 
@@ -14,12 +15,20 @@ export const User = objectType({
         t.nonNull.field("createdAt", {type: "DateTime"});    
         t.nonNull.list.field("sepa", { 
             type: Sepa,
-            resolve(parent, args, { prisma }: Context) {
-                return prisma.sepa.findMany({
+            resolve(parent, args, context : Context) {
+                return context.prisma.sepa.findMany({
                     where: { userId: parent.id }
                 });
             }
         }); 
+        t.nonNull.list.field("paypal", {
+            type: Paypal,
+            resolve(parent, args, context : Context) {
+                return context.prisma.paypal.findMany({
+                    where: { userId: parent.id }
+                });
+            }
+        });
     },
 });
 

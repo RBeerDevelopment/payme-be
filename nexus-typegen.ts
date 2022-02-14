@@ -49,6 +49,11 @@ export interface NexusGenObjects {
     user: NexusGenRootTypes['User']; // User!
   }
   Mutation: {};
+  Paypal: { // root type
+    accountName: string; // String!
+    id: string; // ID!
+    username: string; // String!
+  }
   Query: {};
   Sepa: { // root type
     accountName?: string | null; // String
@@ -56,7 +61,6 @@ export interface NexusGenObjects {
     bic: string; // String!
     iban: string; // String!
     id: string; // ID!
-    user?: NexusGenRootTypes['User'] | null; // User
   }
   User: { // root type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -85,11 +89,20 @@ export interface NexusGenFieldTypes {
     user: NexusGenRootTypes['User']; // User!
   }
   Mutation: { // field return type
+    addPaypal: NexusGenRootTypes['Paypal'] | null; // Paypal
     addSepa: NexusGenRootTypes['Sepa'] | null; // Sepa
+    deletePaypal: NexusGenRootTypes['Paypal'] | null; // Paypal
     deleteSepa: NexusGenRootTypes['Sepa'] | null; // Sepa
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     signup: NexusGenRootTypes['AuthPayload']; // AuthPayload!
+    updatePaypal: NexusGenRootTypes['Paypal'] | null; // Paypal
     updateSepa: NexusGenRootTypes['Sepa'] | null; // Sepa
+  }
+  Paypal: { // field return type
+    accountName: string; // String!
+    id: string; // ID!
+    user: NexusGenRootTypes['User']; // User!
+    username: string; // String!
   }
   Query: { // field return type
     user: NexusGenRootTypes['User'] | null; // User
@@ -101,7 +114,7 @@ export interface NexusGenFieldTypes {
     bic: string; // String!
     iban: string; // String!
     id: string; // ID!
-    user: NexusGenRootTypes['User'] | null; // User
+    user: NexusGenRootTypes['User']; // User!
   }
   User: { // field return type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -110,6 +123,7 @@ export interface NexusGenFieldTypes {
     id: string; // ID!
     lastName: string; // String!
     lastSignin: NexusGenScalars['DateTime']; // DateTime!
+    paypal: Array<NexusGenRootTypes['Paypal'] | null>; // [Paypal]!
     sepa: Array<NexusGenRootTypes['Sepa'] | null>; // [Sepa]!
     username: string; // String!
   }
@@ -121,11 +135,20 @@ export interface NexusGenFieldTypeNames {
     user: 'User'
   }
   Mutation: { // field return type name
+    addPaypal: 'Paypal'
     addSepa: 'Sepa'
+    deletePaypal: 'Paypal'
     deleteSepa: 'Sepa'
     login: 'AuthPayload'
     signup: 'AuthPayload'
+    updatePaypal: 'Paypal'
     updateSepa: 'Sepa'
+  }
+  Paypal: { // field return type name
+    accountName: 'String'
+    id: 'ID'
+    user: 'User'
+    username: 'String'
   }
   Query: { // field return type name
     user: 'User'
@@ -146,6 +169,7 @@ export interface NexusGenFieldTypeNames {
     id: 'ID'
     lastName: 'String'
     lastSignin: 'DateTime'
+    paypal: 'Paypal'
     sepa: 'Sepa'
     username: 'String'
   }
@@ -153,9 +177,16 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    addPaypal: { // args
+      accountName?: string | null; // String
+      username: string; // String!
+    }
     addSepa: { // args
       accountName?: string | null; // String
       iban: string; // String!
+    }
+    deletePaypal: { // args
+      id: number; // Int!
     }
     deleteSepa: { // args
       id: number; // Int!
@@ -170,6 +201,11 @@ export interface NexusGenArgTypes {
       lastName: string; // String!
       password: string; // String!
       username: string; // String!
+    }
+    updatePaypal: { // args
+      accountName?: string | null; // String
+      id: number; // Int!
+      username?: string | null; // String
     }
     updateSepa: { // args
       accountName?: string | null; // String

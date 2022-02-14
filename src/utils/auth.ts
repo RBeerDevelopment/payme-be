@@ -14,5 +14,6 @@ export function decodeAuthHeader(authHeader: string): AuthTokenPayload {
         throw new Error("No token found");
     }
 
+    console.log( { jwt: jwt.verify(token, APP_SECRET) });
     return jwt.verify(token, APP_SECRET) as AuthTokenPayload;
 }

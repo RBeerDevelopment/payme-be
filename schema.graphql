@@ -13,11 +13,21 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `dat
 scalar DateTime
 
 type Mutation {
+  addPaypal(accountName: String, username: String!): Paypal
   addSepa(accountName: String, iban: String!): Sepa
+  deletePaypal(id: Int!): Paypal
   deleteSepa(id: Int!): Sepa
   login(password: String!, username: String!): AuthPayload!
   signup(email: String!, firstName: String!, lastName: String!, password: String!, username: String!): AuthPayload!
+  updatePaypal(accountName: String, id: Int!, username: String): Paypal
   updateSepa(accountName: String, bankName: String, bic: String, iban: String, id: Int!): Sepa
+}
+
+type Paypal {
+  accountName: String!
+  id: ID!
+  user: User!
+  username: String!
 }
 
 type Query {
@@ -31,7 +41,7 @@ type Sepa {
   bic: String!
   iban: String!
   id: ID!
-  user: User
+  user: User!
 }
 
 type User {
@@ -41,6 +51,7 @@ type User {
   id: ID!
   lastName: String!
   lastSignin: DateTime!
+  paypal: [Paypal]!
   sepa: [Sepa]!
   username: String!
 }

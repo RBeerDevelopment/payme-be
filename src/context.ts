@@ -12,12 +12,12 @@ export interface Context {
 export function context({ express }: { express: ExpressContext }): Context {
 
     const req = express.req;
-    const token =
+    const tokenPayload =
         req && req.headers.authorization ? decodeAuthHeader(req.headers.authorization)
             : null;
 
     return {
         prisma,
-        userId: token?.userId
+        userId: tokenPayload?.userId
     };
 }

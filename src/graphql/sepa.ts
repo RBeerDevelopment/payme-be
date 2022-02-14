@@ -12,7 +12,18 @@ export const Sepa = objectType({
         t.nonNull.string("bic");
         t.nonNull.string("bankName");
         t.nullable.string("accountName");
-        t.field("user", { type: User });   
+        t.nonNull.field("user", { 
+            type: User,
+            async resolve(parent, args, context : Context) {
+                const sepa = await context.prisma.sepa.findUnique({
+                    where: { id: parent.id }
+                });
+
+                return await context.prisma.user.findUnique({
+                    where: { id: sepa?.userId || -1 }
+                });
+            }
+        });     
     },
 });
 
@@ -42,7 +53,7 @@ export const SepaMutation = extendType({
                         bic: ibanInfo.bic,
                         bankName: ibanInfo.bankName,
                         accountName,
-                        User: {
+                        user: {
                             connect: {
                                 id: userId
                             }
@@ -132,8 +143,6 @@ async function hasAccess(userId: number | undefined, sepaId?: number, prisma?: P
         throw new Error("User not signed in.");
     }
 
-    console.log({ userId });
-
     if(!sepaId) {
         return true;
     } 
@@ -142,14 +151,9 @@ async function hasAccess(userId: number | undefined, sepaId?: number, prisma?: P
         throw new Error("Internal Error, missing DB client");
     }
 
-    console.log({ sepaId });
-
     const currentSepa = await prisma.sepa.findUnique({ where: { id: sepaId }});
 
-    console.log({ sepaUserId: currentSepa?.userId, userId });
     if(currentSepa?.userId !== userId) {
-        console.log({ sepaUserId: currentSepa?.userId, userId });
-
         throw new Error("No access to edit this SEPA account.");
     }
 
