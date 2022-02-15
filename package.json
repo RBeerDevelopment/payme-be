@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "dev": "serverless offline start",
-    "deploy-staging": "prisma generate && serverless deploy --stage staging",
+    "deploy-staging": "yarn generate && SLS_DEBUG=* serverless deploy --stage staging",
     "generate": "ts-node --transpile-only src/schema.ts && prisma generate"
   },
   "keywords": [],
@@ -17,6 +17,7 @@
     "apollo-server-lambda": "^3.6.2",
     "bcryptjs": "^2.4.3",
     "express": "^4.17.2",
+    "graphql-iso-date": "^3.6.1",
     "graphql-subscriptions": "^1.2.1",
     "jsonwebtoken": "^8.5.1",
     "nexus": "^1.2.0",
@@ -29,7 +30,6 @@
     "@typescript-eslint/eslint-plugin": "^5.10.2",
     "@typescript-eslint/parser": "^5.10.2",
     "eslint": "^8.8.0",
-    "graphql-iso-date": "^3.6.1",
     "prisma": "^3.9.2",
     "serverless-dotenv-plugin": "^3.12.2",
     "serverless-offline": "^8.4.0",
