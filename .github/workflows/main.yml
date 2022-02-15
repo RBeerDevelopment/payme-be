@@ -22,7 +22,7 @@ jobs:
               with:
                   envkey_APP_SECRET: ${{secrets.APP_SECRET}}
                   envkey_DATABASE_URL: ${{secrets.DATABASE_URL}}
-            - run: npm ci
+            - run: rm -rf node_modules && yarn install --frozen-lockfile
             - name: serverless deploy
               uses: serverless/github-action@master
               with:
