@@ -6,7 +6,7 @@ import { context } from "./context";
 const apolloServer = new ApolloServer({
     schema,
     context,
-    introspection: true,
+    introspection: false
 });
 
 export const graphqlHandler = apolloServer.createHandler({});
