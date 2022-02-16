@@ -9,4 +9,11 @@ const apolloServer = new ApolloServer({
     introspection: false
 });
 
-export const graphqlHandler = apolloServer.createHandler({});
+export const graphqlHandler = apolloServer.createHandler({
+    expressGetMiddlewareOptions: {
+        cors: {
+            origin: "*",
+            credentials: true
+        }
+    }
+});
