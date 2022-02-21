@@ -23,6 +23,7 @@ model User {
   passwordHash String
   lastSignin   DateTime @default(now())
   createdAt    DateTime @default(now())
+  avatarPath   String?
   sepa         Sepa[]
   Paypal       Paypal[]
 }

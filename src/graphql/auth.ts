@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 import { extendType, nonNull, objectType, stringArg } from "nexus";
+import { generateAvatar, uploadAvatar } from "../avatar";
 import { Context } from "../context";
 import { APP_SECRET, getNowAsISO, oneHourFromNow } from "../utils";
 import { validateEmailAddress, validatePassword } from "../validation";
@@ -82,6 +83,11 @@ export const AuthMutation = extendType({
 
                 const passwordHash = await bcrypt.hash(password, 10);
 
+                const avatar = generateAvatar(username);
+                console.log({ avatar });
+                const avatarFilePath = await uploadAvatar(username, avatar);
+                console.log({ avatarFilePath });
+
                 const user = await context.prisma.user.create({
                     data: {
                         email,
@@ -89,6 +95,7 @@ export const AuthMutation = extendType({
                         firstName,
                         lastName,
                         passwordHash,
+                        avatarPath: avatarFilePath
                     },
                 });
 

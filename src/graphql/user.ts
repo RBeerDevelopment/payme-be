@@ -1,5 +1,6 @@
 import { extendType, objectType, stringArg } from "nexus";
 import { Paypal } from ".";
+import { AwsFileUploader } from "../aws/s3/s3-upload";
 import { Context } from "../context";
 import { Sepa } from "./sepa";
 
@@ -15,7 +16,7 @@ export const User = objectType({
         t.nonNull.field("createdAt", {type: "DateTime"});    
         t.nonNull.list.field("sepa", { 
             type: Sepa,
-            resolve(parent, args, context : Context) {
+            resolve(parent, args, context: Context) {
                 return context.prisma.sepa.findMany({
                     where: { userId: parent.id }
                 });
@@ -23,10 +24,22 @@ export const User = objectType({
         }); 
         t.nonNull.list.field("paypal", {
             type: Paypal,
-            resolve(parent, args, context : Context) {
+            resolve(parent, args, context: Context) {
                 return context.prisma.paypal.findMany({
                     where: { userId: parent.id }
                 });
+            }
+        });
+        t.nullable.string("avatarUrl", {
+            async resolve(parent, args, context: Context) {
+                const user = await context.prisma.user.findUnique({
+                    where: { id: parent.id }
+                });
+                const awsFileClient = new AwsFileUploader();
+                if(!user?.avatarPath) {
+                    return "";
+                }
+                return awsFileClient.createSignedUrl(user?.avatarPath);
             }
         });
     },

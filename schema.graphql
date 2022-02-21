@@ -45,6 +45,7 @@ type Sepa {
 }
 
 type User {
+  avatarUrl: String
   createdAt: DateTime!
   email: String!
   firstName: String!

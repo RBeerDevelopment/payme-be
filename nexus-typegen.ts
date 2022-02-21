@@ -117,6 +117,7 @@ export interface NexusGenFieldTypes {
     user: NexusGenRootTypes['User']; // User!
   }
   User: { // field return type
+    avatarUrl: string | null; // String
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     email: string; // String!
     firstName: string; // String!
@@ -163,6 +164,7 @@ export interface NexusGenFieldTypeNames {
     user: 'User'
   }
   User: { // field return type name
+    avatarUrl: 'String'
     createdAt: 'DateTime'
     email: 'String'
     firstName: 'String'
