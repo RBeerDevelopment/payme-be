@@ -22,9 +22,6 @@ plugins:
 custom:
   webpack:
     includeModules: true
-    # packager: 'yarn'
-    # noFrozenLockfile: true
-    noInstall: true
 
 package:
   excludeDevDependencies: true
