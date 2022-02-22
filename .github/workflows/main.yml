@@ -20,8 +20,15 @@ jobs:
             - name: Make envfile (for use with prisma)
               uses: SpicyPizza/create-envfile@v1
               with:
-                  envkey_APP_SECRET: ${{secrets.APP_SECRET}}
-                  envkey_DATABASE_URL: ${{secrets.DATABASE_URL}}
+                envkey_APP_SECRET: ${{secrets.APP_SECRET}}
+                envkey_DATABASE_URL: ${{secrets.DATABASE_URL}}
+                envkey_SHADOW_DATABASE_URL: ${{secrets.SHADOW_DATABASE_URL}}
+                envkey_AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+                envkey_AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+                envkey_AWS_S3_BUCKET: ${{secrets.AWS_S3_BUCKET}}
+                envkey_AWS_S3_REGION: "eu-central-1"
+
+
             - run: rm -rf node_modules && yarn install --frozen-lockfile
             - name: serverless deploy
               uses: serverless/github-action@master
