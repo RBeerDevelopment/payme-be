@@ -19,10 +19,11 @@ plugins:
   - serverless-dotenv-plugin
   - serverless-webpack
   - serverless-offline
+  - serverless-plugin-include-dependencies
 custom:
   webpack:
     includeModules: true
 
 package:
   excludeDevDependencies: true
-  individually: false
+  individually: true
