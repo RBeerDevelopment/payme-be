@@ -10,7 +10,13 @@ stop-db: ## Stops and removes local db
 	docker rm -f payme-postgres
 
 run: ## Start local serverless instance of the app
-	@yarn generate
+	@yarn generate-nexus
+	@yarn generate-prisma
 	@yarn dev
+
+package: ## Package for production
+	@yarn install
+	@yarn generate-prisma
+	sls package --verbose
 
 # npx prisma migrate dev --name init

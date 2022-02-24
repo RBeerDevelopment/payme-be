@@ -4,8 +4,9 @@
   "description": "",
   "scripts": {
     "dev": "serverless offline start",
-    "deploy-staging": "yarn generate && SLS_DEBUG=* serverless deploy --stage staging",
-    "generate": "ts-node --transpile-only src/schema.ts && prisma generate"
+    "deploy-staging": "yarn generate-nexus && yarn generate-prisma && SLS_DEBUG=* serverless deploy --stage staging",
+    "generate-nexus": "ts-node --transpile-only src/schema.ts",
+    "generate-prisma": "prisma generate"
   },
   "keywords": [],
   "author": "Robin Beer",
@@ -16,12 +17,10 @@
     "@dicebear/avatars": "^4.10.2",
     "@dicebear/avatars-bottts-sprites": "^4.10.2",
     "@prisma/client": "^3.9.2",
-    "@types/bcryptjs": "^2.4.2",
-    "@types/jsonwebtoken": "^8.5.8",
     "apollo-server-lambda": "^3.6.2",
     "bcryptjs": "^2.4.3",
     "express": "^4.17.2",
-    "graphql-iso-date": "^3.6.1",
+    "graphql": "15",
     "graphql-subscriptions": "^1.2.1",
     "jsonwebtoken": "^8.5.1",
     "nexus": "^1.2.0",
@@ -29,8 +28,9 @@
     "svgo": "^2.8.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
     "@types/express": "^4.17.13",
-    "@types/graphql-iso-date": "^3.4.0",
+    "@types/jsonwebtoken": "^8.5.8",
     "@types/svgo": "^2.6.2",
     "@typescript-eslint/eslint-plugin": "^5.10.2",
     "@typescript-eslint/parser": "^5.10.2",

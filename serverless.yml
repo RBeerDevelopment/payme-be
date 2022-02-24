@@ -19,11 +19,21 @@ plugins:
   - serverless-dotenv-plugin
   - serverless-webpack
   - serverless-offline
-  - serverless-plugin-include-dependencies
 custom:
   webpack:
     includeModules: true
-
+    packager: "yarn"
+frameworkVersion: ^3.2.1
 package:
   excludeDevDependencies: true
   individually: true
+  exclude:
+    - .git/**
+    - src/**
+    - .github/**
+    - .vscode/**
+    - makefile
+    - test/**
+    - prisma/**
+    - README.md
+    - yarn.lock

@@ -1,10 +1,13 @@
 const nodeExternals = require("webpack-node-externals");
-const serverlessWebpack = require("serverless-webpack");
+const slws = require("serverless-webpack");
+
+const isLocal = slws.lib.webpack.isLocal;
+
 
 module.exports = {
-    devtool: "inline-cheap-module-source-map",
-    entry: serverlessWebpack.lib.entries,
-    mode: serverlessWebpack.lib.webpack.isLocal ? "development" : "production",
+    ...(isLocal && { devtool: "inline-cheap-module-source-map" }),
+    entry: slws.lib.entries,
+    mode: isLocal ? "development" : "production",
     module: {
         rules: [
             {
@@ -14,10 +17,10 @@ module.exports = {
             },
         ],
     },
-    node: false,
+    node: true,
     externals: [nodeExternals()],
     optimization: {
-        minimize: false,
+        minimize: true,
     },
     resolve: {
         extensions: [".ts", ".js"],
