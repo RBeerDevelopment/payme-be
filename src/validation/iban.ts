@@ -1,5 +1,5 @@
 
-import * as Openiban from "openiban";
+import { validate } from "openiban";
 import { ValidationResult } from "openiban/dist/types/types";
  
 
@@ -14,7 +14,7 @@ export async function getIbanInfo(iban: string): Promise<IbanInfo | undefined> {
     console.log(sanitizedIban);
 
     try {
-        const res: ValidationResult = await Openiban.validate(sanitizedIban);
+        const res: ValidationResult = await validate(sanitizedIban);
 
         if(!res.valid) return;
     

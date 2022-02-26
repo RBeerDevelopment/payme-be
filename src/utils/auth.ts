@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import { verify } from "jsonwebtoken";
 
 
 export const APP_SECRET: string = process.env.APP_SECRET || "";
@@ -13,7 +13,6 @@ export function decodeAuthHeader(authHeader: string): AuthTokenPayload {
     if (!token) {
         throw new Error("No token found");
     }
-
-    console.log( { jwt: jwt.verify(token, APP_SECRET) });
-    return jwt.verify(token, APP_SECRET) as AuthTokenPayload;
+    
+    return verify(token, APP_SECRET) as AuthTokenPayload;
 }

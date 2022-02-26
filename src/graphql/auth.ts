@@ -1,5 +1,5 @@
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { compare as bcCompare, hash as bcHash } from "bcryptjs";
+import { sign } from "jsonwebtoken";
 
 import { extendType, nonNull, objectType, stringArg } from "nexus";
 import { generateAvatar, uploadAvatar } from "../avatar";
@@ -38,7 +38,7 @@ export const AuthMutation = extendType({
                     throw new Error("No such user found");
                 }
 
-                const valid = await bcrypt.compare(
+                const valid = await bcCompare(
                     password,
                     user.passwordHash,
                 );
@@ -46,7 +46,7 @@ export const AuthMutation = extendType({
                     throw new Error("Invalid password");
                 }
 
-                const token = jwt.sign({ 
+                const token = sign({ 
                     userId: user.id,
                     exp: oneHourFromNow()
                 }, APP_SECRET);
@@ -81,7 +81,7 @@ export const AuthMutation = extendType({
                 const isValidPassword = validatePassword(password);
                 if (!isValidPassword) throw new Error("invalid_password");
 
-                const passwordHash = await bcrypt.hash(password, 10);
+                const passwordHash = await bcHash(password, 10);
 
                 const avatar = generateAvatar(username);
                 console.log({ avatar });
@@ -99,7 +99,7 @@ export const AuthMutation = extendType({
                     },
                 });
 
-                const token = jwt.sign({ 
+                const token = sign({ 
                     userId: user.id,
                     exp: oneHourFromNow()
                 }, APP_SECRET);
