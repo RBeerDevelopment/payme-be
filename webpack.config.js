@@ -20,7 +20,7 @@ module.exports = {
     node: true,
     externals: [nodeExternals()],
     optimization: {
-        minimize: true,
+        minimize: true
     },
     resolve: {
         extensions: [".ts", ".js"],

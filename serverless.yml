@@ -14,22 +14,13 @@ functions:
 plugins:
   - serverless-dotenv-plugin
   - serverless-webpack
+  - serverless-webpack-prisma
   - serverless-offline
 custom:
   webpack:
-    includeModules: true
-    packager: "yarn"
+    includeModules: true 
 frameworkVersion: ^3.2.1
 package:
   excludeDevDependencies: true
   individually: true
-  exclude:
-    - .git/**
-    - src/**
-    - .github/**
-    - .vscode/**
-    - makefile
-    - test/**
-    - prisma/**
-    - README.md
-    - yarn.lock
+    
