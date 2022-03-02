@@ -4,7 +4,7 @@ import { ApolloServerPluginLandingPageGraphQLPlayground as Playground } from "ap
 import { schema } from "./schema";
 import { context } from "./context";
 
-const isOffline = process.env.IS_OFFLINE;
+const isOffline = Boolean(process.env.IS_OFFLINE);
 
 const plugins = [];
 
@@ -14,7 +14,7 @@ if(isOffline) {
 const apolloServer = new ApolloServer({
     schema,
     context,
-    introspection: true,
+    introspection: isOffline,
     plugins
 });
 
