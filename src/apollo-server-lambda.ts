@@ -1,14 +1,21 @@
 import { ApolloServer } from "apollo-server-lambda";
+import { ApolloServerPluginLandingPageGraphQLPlayground as Playground } from "apollo-server-core";
 
 import { schema } from "./schema";
 import { context } from "./context";
 
-const mySchema: any = schema;
+const isOffline = process.env.IS_OFFLINE;
 
+const plugins = [];
+
+if(isOffline) {
+    plugins.push(Playground());
+}
 const apolloServer = new ApolloServer({
-    schema: mySchema,
+    schema,
     context,
-    introspection: true
+    introspection: true,
+    plugins
 });
 
 export const graphqlHandler = apolloServer.createHandler({

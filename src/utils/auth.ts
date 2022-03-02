@@ -14,5 +14,6 @@ export function decodeAuthHeader(authHeader: string): AuthTokenPayload {
         throw new Error("No token found");
     }
     
-    return verify(token, APP_SECRET) as AuthTokenPayload;
+    return verify(token, APP_SECRET, { maxAge: "1 hour"}) as AuthTokenPayload;
+
 }

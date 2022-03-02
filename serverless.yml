@@ -11,6 +11,10 @@ functions:
           path: graphql
           method: post
           cors: true
+      - http:
+          path: graphql
+          method: get
+          cors: true
 plugins:
   - serverless-dotenv-plugin
   - serverless-webpack
@@ -23,4 +27,3 @@ frameworkVersion: ^3.2.1
 package:
   excludeDevDependencies: true
   individually: true
-    
