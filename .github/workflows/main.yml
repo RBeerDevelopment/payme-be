@@ -10,13 +10,14 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                node-version: [17.x]
+                node-version: [14.2.0]
         steps:
             - uses: actions/checkout@v2
             - name: Use Node.js ${{ matrix.node-version }}
               uses: actions/setup-node@v1
               with:
                   node-version: ${{ matrix.node-version }}
+                  cache: 'npm'
             - name: Make envfile (for use with prisma)
               uses: SpicyPizza/create-envfile@v1
               with:
