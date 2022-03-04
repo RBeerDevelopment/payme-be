@@ -22,7 +22,6 @@ export const graphqlHandler = apolloServer.createHandler({
     expressGetMiddlewareOptions: {
         cors: {
             origin: "*",
-            credentials: true
         }
     }
 });
