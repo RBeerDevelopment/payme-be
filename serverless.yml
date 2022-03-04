@@ -3,6 +3,7 @@ provider:
   name: aws
   runtime: nodejs14.x
   region: eu-central-1
+  memorySize: 512
 functions:
   graphql:
     handler: src/apollo-server-lambda.graphqlHandler
@@ -20,9 +21,14 @@ plugins:
   - serverless-webpack
   - serverless-webpack-prisma
   - serverless-offline
+  - serverless-prune-plugin
+
 custom:
   webpack:
-    includeModules: true 
+    includeModules: true
+  prune:
+    automatic: true
+    number: 2
 frameworkVersion: ^3.2.1
 package:
   excludeDevDependencies: true
