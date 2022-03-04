@@ -32,7 +32,7 @@ jobs:
 
             - run: rm -rf node_modules && npm ci
             - name: serverless deploy PROD
-              if: ${{ github.ref == 'refs/heads/master' }}
+              if: ${{ github.ref == 'refs/heads/main' }}
               uses: serverless/github-action@master
               with:
                   args: deploy --stage prod
