@@ -7,6 +7,16 @@ type AuthPayload {
   user: User!
 }
 
+"""Available currencies according to ISO 4217"""
+enum Currency {
+  AUD
+  CNY
+  EUR
+  GBP
+  JPY
+  USD
+}
+
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
@@ -15,12 +25,26 @@ scalar DateTime
 type Mutation {
   addPaypal(accountName: String, username: String!): Paypal
   addSepa(accountName: String, iban: String!): Sepa
+  createPayment(amount: Float!, currency: Currency!, description: String!): Payment
+  deletePayment(id: Int!): Payment
   deletePaypal(id: Int!): Paypal
   deleteSepa(id: Int!): Sepa
   login(password: String!, username: String!): AuthPayload!
+  markPaymentPaid(id: Int!): Payment
   signup(email: String!, firstName: String!, lastName: String!, password: String!, username: String!): AuthPayload!
+  updatePayment(amount: String, currency: Currency!, description: String, id: Int!): Paypal
   updatePaypal(accountName: String, id: Int!, username: String): Paypal
   updateSepa(accountName: String, bankName: String, bic: String, iban: String, id: Int!): Sepa
+}
+
+type Payment {
+  amount: Float!
+  createdAt: DateTime!
+  createdBy: User!
+  currency: String!
+  description: String!
+  id: ID!
+  isPaid: Boolean!
 }
 
 type Paypal {
@@ -31,6 +55,7 @@ type Paypal {
 }
 
 type Query {
+  payment(id: Int): Payment
   user(username: String): User
   users: [User]!
 }

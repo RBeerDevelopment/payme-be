@@ -6,7 +6,8 @@
     "dev": "serverless offline start",
     "deploy-staging": "yarn generate-nexus && yarn generate-prisma && SLS_DEBUG=* serverless deploy --stage staging",
     "generate-nexus": "ts-node --transpile-only src/schema.ts",
-    "generate-prisma": "prisma generate"
+    "generate-prisma": "prisma generate",
+    "prisma-push-changes": "prisma db push"
   },
   "keywords": [],
   "author": "Robin Beer",

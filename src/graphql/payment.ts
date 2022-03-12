@@ -25,7 +25,7 @@ export const Payment = objectType({
             }
         });   
         t.nonNull.field("createdAt", {
-            type: "datetime",
+            type: "DateTime",
             async resolve(parent, args, context: Context) {
                 const payment = await context.prisma.payment.findUnique({
                     where: { id: parent.id }
