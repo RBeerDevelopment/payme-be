@@ -15,17 +15,18 @@ generator client {
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
+  id           Int       @id @default(autoincrement())
   firstName    String
   lastName     String
-  username     String   @unique
-  email        String   @unique
+  username     String    @unique
+  email        String    @unique
   passwordHash String
-  lastSignin   DateTime @default(now())
-  createdAt    DateTime @default(now())
+  lastSignin   DateTime  @default(now())
+  createdAt    DateTime  @default(now())
   avatarPath   String?
   sepa         Sepa[]
   Paypal       Paypal[]
+  Payment      Payment[]
 }
 
 model Sepa {
@@ -44,4 +45,24 @@ model Paypal {
   accountName String
   user        User?  @relation(fields: [userId], references: [id])
   userId      Int?
+}
+
+model Payment {
+  id          Int      @id @default(autoincrement())
+  description String
+  amount      Float
+  currency    Currency
+  isPaid      Boolean  @default(false)
+  createdBy   User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  userId      Int
+}
+
+enum Currency {
+  USD
+  GBP
+  EUR
+  AUD
+  JPY
+  CNY
 }

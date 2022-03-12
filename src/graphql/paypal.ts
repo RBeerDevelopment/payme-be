@@ -13,12 +13,11 @@ export const Paypal = objectType({
             type: User,
             async resolve(parent, args, context : Context) {
                 const paypal = await context.prisma.paypal.findUnique({
-                    where: { id: parent.id }
+                    where: { id: parent.id },
+                    include: { user: true }
                 });
 
-                return await context.prisma.user.findUnique({
-                    where: { id: paypal?.userId || -1 }
-                });
+                return paypal?.user;
             }
         });   
     },

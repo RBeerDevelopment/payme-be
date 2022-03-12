@@ -16,12 +16,11 @@ export const Sepa = objectType({
             type: User,
             async resolve(parent, args, context : Context) {
                 const sepa = await context.prisma.sepa.findUnique({
-                    where: { id: parent.id }
+                    where: { id: parent.id },
+                    include: { user: true }
                 });
 
-                return await context.prisma.user.findUnique({
-                    where: { id: sepa?.userId || -1 }
-                });
+                return sepa?.user;
             }
         });     
     },
