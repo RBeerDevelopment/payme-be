@@ -6,7 +6,7 @@ import { User } from "./user";
 export const Paypal = objectType({
     name: "Paypal",
     definition(t) {
-        t.nonNull.id("id");
+        t.nonNull.int("id");
         t.nonNull.string("username");
         t.nonNull.string("accountName");
         t.nonNull.field("user", { 

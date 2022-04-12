@@ -1,7 +1,8 @@
-import { extendType, objectType, stringArg } from "nexus";
+import { booleanArg, extendType, nullable, objectType, stringArg } from "nexus";
 import { Paypal } from ".";
 import { AwsFileUploader } from "../aws/s3/s3-upload";
 import { Context } from "../context";
+import { Payment } from "./payment";
 import { Sepa } from "./sepa";
 
 export const User = objectType({
@@ -42,6 +43,20 @@ export const User = objectType({
                 return awsFileClient.createSignedUrl(user?.avatarPath);
             }
         });
+        t.nonNull.list.field("payments", {
+            type: Payment,
+            resolve(parent, args, context: Context) {
+
+                const { onlyActive } = args;
+
+                return context.prisma.payment.findMany({
+                    where: {
+                        userId: parent.id,
+                        ...(onlyActive && { isPaid: true })
+                    }                    
+                });
+            }
+        });
     },
 });
 
@@ -61,8 +76,8 @@ export const UserQuery = extendType({
         }),
         t.nullable.field("user", {
             type: "User",
-            args: { username: stringArg() },
-            resolve(parent, { username }, { userId, prisma }: Context) {
+            args: { username: stringArg(), onlyActive: nullable(booleanArg()) },
+            resolve(parent, { username, onlyActive }, { userId, prisma }: Context) {
 
                 if (!userId) {
                     throw new Error("User not signed in.");

@@ -23,16 +23,16 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `dat
 scalar DateTime
 
 type Mutation {
+  addPayment(amount: Float!, currency: Currency!, description: String, name: String!): Payment
   addPaypal(accountName: String, username: String!): Paypal
   addSepa(accountName: String, iban: String!): Sepa
-  createPayment(amount: Float!, currency: Currency!, description: String!): Payment
   deletePayment(id: Int!): Payment
   deletePaypal(id: Int!): Paypal
   deleteSepa(id: Int!): Sepa
   login(password: String!, username: String!): AuthPayload!
   markPaymentPaid(id: Int!): Payment
   signup(email: String!, firstName: String!, lastName: String!, password: String!, username: String!): AuthPayload!
-  updatePayment(amount: String, currency: Currency!, description: String, id: Int!): Paypal
+  updatePayment(amount: String, currency: Currency!, description: String, id: Int!, name: String): Paypal
   updatePaypal(accountName: String, id: Int!, username: String): Paypal
   updateSepa(accountName: String, bankName: String, bic: String, iban: String, id: Int!): Sepa
 }
@@ -42,21 +42,22 @@ type Payment {
   createdAt: DateTime!
   createdBy: User!
   currency: String!
-  description: String!
+  description: String
   id: ID!
   isPaid: Boolean!
+  name: String!
 }
 
 type Paypal {
   accountName: String!
-  id: ID!
+  id: Int!
   user: User!
   username: String!
 }
 
 type Query {
   payment(id: Int): Payment
-  user(username: String): User
+  user(onlyActive: Boolean, username: String): User
   users: [User]!
 }
 
@@ -65,7 +66,7 @@ type Sepa {
   bankName: String!
   bic: String!
   iban: String!
-  id: ID!
+  id: Int!
   user: User!
 }
 
@@ -77,6 +78,7 @@ type User {
   id: ID!
   lastName: String!
   lastSignin: DateTime!
+  payments: [Payment]!
   paypal: [Paypal]!
   sepa: [Sepa]!
   username: String!

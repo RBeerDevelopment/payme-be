@@ -8,7 +8,8 @@ export const Payment = objectType({
     name: "Payment",
     definition(t) {
         t.nonNull.id("id");
-        t.nonNull.string("description");
+        t.nonNull.string("name");
+        t.nullable.string("description");
         t.nonNull.float("amount");
         // may have to be handled
         t.nonNull.string("currency");
@@ -57,10 +58,11 @@ export const PaymentQuery = extendType({
 export const PaymentMutation = extendType({
     type: "Mutation",
     definition(t) {
-        t.field("createPayment", {
+        t.field("addPayment", {
             type: "Payment",
             args: {
-                description: nonNull(stringArg()),
+                name: nonNull(stringArg()),
+                description: nullable(stringArg()),
                 amount: nonNull(floatArg()),
                 currency: nonNull(arg({
                     type: Currency,
@@ -68,12 +70,13 @@ export const PaymentMutation = extendType({
             },
             async resolve(parent, args, context: Context) {
                 const { prisma, userId } = context;
-                const { description, amount, currency } = args;
+                const { name, description, amount, currency } = args;
 
                 await hasAccess(userId);
                 
                 const payment = await prisma.payment.create({
                     data: {
+                        name,
                         description,
                         amount,
                         currency,
@@ -113,6 +116,7 @@ export const PaymentMutation = extendType({
             type: "Paypal",
             args: {
                 id: nonNull(intArg()),
+                name: nullable(stringArg()),
                 description: nullable(stringArg()),
                 amount: nullable(stringArg()),
                 currency: nonNull(arg({
@@ -121,7 +125,7 @@ export const PaymentMutation = extendType({
             },
             async resolve(parent, args, context: Context) {
                 const { prisma, userId } = context;
-                const { id, description, amount, currency } = args;
+                const { id, name, description, amount, currency } = args;
 
                 await hasAccess(userId, id, prisma);
 
@@ -130,6 +134,7 @@ export const PaymentMutation = extendType({
                         id
                     },
                     data: {
+                        name,
                         description,
                         amount,
                         currency

@@ -55,7 +55,8 @@ model Paypal {
 
 model Payment {
   id          Int      @id @default(autoincrement())
-  description String
+  name        String
+  description String?
   amount      Float
   currency    Currency
   isPaid      Boolean  @default(false)

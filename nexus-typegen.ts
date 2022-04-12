@@ -53,13 +53,14 @@ export interface NexusGenObjects {
   Payment: { // root type
     amount: number; // Float!
     currency: string; // String!
-    description: string; // String!
+    description?: string | null; // String
     id: string; // ID!
     isPaid: boolean; // Boolean!
+    name: string; // String!
   }
   Paypal: { // root type
     accountName: string; // String!
-    id: string; // ID!
+    id: number; // Int!
     username: string; // String!
   }
   Query: {};
@@ -68,7 +69,7 @@ export interface NexusGenObjects {
     bankName: string; // String!
     bic: string; // String!
     iban: string; // String!
-    id: string; // ID!
+    id: number; // Int!
   }
   User: { // root type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -97,9 +98,9 @@ export interface NexusGenFieldTypes {
     user: NexusGenRootTypes['User']; // User!
   }
   Mutation: { // field return type
+    addPayment: NexusGenRootTypes['Payment'] | null; // Payment
     addPaypal: NexusGenRootTypes['Paypal'] | null; // Paypal
     addSepa: NexusGenRootTypes['Sepa'] | null; // Sepa
-    createPayment: NexusGenRootTypes['Payment'] | null; // Payment
     deletePayment: NexusGenRootTypes['Payment'] | null; // Payment
     deletePaypal: NexusGenRootTypes['Paypal'] | null; // Paypal
     deleteSepa: NexusGenRootTypes['Sepa'] | null; // Sepa
@@ -115,13 +116,14 @@ export interface NexusGenFieldTypes {
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     createdBy: NexusGenRootTypes['User']; // User!
     currency: string; // String!
-    description: string; // String!
+    description: string | null; // String
     id: string; // ID!
     isPaid: boolean; // Boolean!
+    name: string; // String!
   }
   Paypal: { // field return type
     accountName: string; // String!
-    id: string; // ID!
+    id: number; // Int!
     user: NexusGenRootTypes['User']; // User!
     username: string; // String!
   }
@@ -135,7 +137,7 @@ export interface NexusGenFieldTypes {
     bankName: string; // String!
     bic: string; // String!
     iban: string; // String!
-    id: string; // ID!
+    id: number; // Int!
     user: NexusGenRootTypes['User']; // User!
   }
   User: { // field return type
@@ -146,6 +148,7 @@ export interface NexusGenFieldTypes {
     id: string; // ID!
     lastName: string; // String!
     lastSignin: NexusGenScalars['DateTime']; // DateTime!
+    payments: Array<NexusGenRootTypes['Payment'] | null>; // [Payment]!
     paypal: Array<NexusGenRootTypes['Paypal'] | null>; // [Paypal]!
     sepa: Array<NexusGenRootTypes['Sepa'] | null>; // [Sepa]!
     username: string; // String!
@@ -158,9 +161,9 @@ export interface NexusGenFieldTypeNames {
     user: 'User'
   }
   Mutation: { // field return type name
+    addPayment: 'Payment'
     addPaypal: 'Paypal'
     addSepa: 'Sepa'
-    createPayment: 'Payment'
     deletePayment: 'Payment'
     deletePaypal: 'Paypal'
     deleteSepa: 'Sepa'
@@ -179,10 +182,11 @@ export interface NexusGenFieldTypeNames {
     description: 'String'
     id: 'ID'
     isPaid: 'Boolean'
+    name: 'String'
   }
   Paypal: { // field return type name
     accountName: 'String'
-    id: 'ID'
+    id: 'Int'
     user: 'User'
     username: 'String'
   }
@@ -196,7 +200,7 @@ export interface NexusGenFieldTypeNames {
     bankName: 'String'
     bic: 'String'
     iban: 'String'
-    id: 'ID'
+    id: 'Int'
     user: 'User'
   }
   User: { // field return type name
@@ -207,6 +211,7 @@ export interface NexusGenFieldTypeNames {
     id: 'ID'
     lastName: 'String'
     lastSignin: 'DateTime'
+    payments: 'Payment'
     paypal: 'Paypal'
     sepa: 'Sepa'
     username: 'String'
@@ -215,6 +220,12 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    addPayment: { // args
+      amount: number; // Float!
+      currency: NexusGenEnums['Currency']; // Currency!
+      description?: string | null; // String
+      name: string; // String!
+    }
     addPaypal: { // args
       accountName?: string | null; // String
       username: string; // String!
@@ -222,11 +233,6 @@ export interface NexusGenArgTypes {
     addSepa: { // args
       accountName?: string | null; // String
       iban: string; // String!
-    }
-    createPayment: { // args
-      amount: number; // Float!
-      currency: NexusGenEnums['Currency']; // Currency!
-      description: string; // String!
     }
     deletePayment: { // args
       id: number; // Int!
@@ -256,6 +262,7 @@ export interface NexusGenArgTypes {
       currency: NexusGenEnums['Currency']; // Currency!
       description?: string | null; // String
       id: number; // Int!
+      name?: string | null; // String
     }
     updatePaypal: { // args
       accountName?: string | null; // String
@@ -275,6 +282,7 @@ export interface NexusGenArgTypes {
       id?: number | null; // Int
     }
     user: { // args
+      onlyActive?: boolean | null; // Boolean
       username?: string | null; // String
     }
   }

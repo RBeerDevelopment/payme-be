@@ -7,7 +7,7 @@ import { User } from "./user";
 export const Sepa = objectType({
     name: "Sepa",
     definition(t) {
-        t.nonNull.id("id");
+        t.nonNull.int("id");
         t.nonNull.string("iban");
         t.nonNull.string("bic");
         t.nonNull.string("bankName");
