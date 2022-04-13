@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { arg, extendType, floatArg, intArg, nonNull, nullable, objectType, stringArg } from "nexus";
+import { arg, booleanArg, extendType, floatArg, intArg, nonNull, nullable, objectType, stringArg } from "nexus";
 import { Context } from "../context";
 import { User } from "./user";
 import { Currency } from "./currency";
@@ -91,21 +91,22 @@ export const PaymentMutation = extendType({
                 return payment;
             }
         }),
-        t.field("markPaymentPaid", {
+        t.field("setPaymentPaid", {
             type: "Payment",
             args: {
                 id: nonNull(intArg()),
+                paid: nonNull(booleanArg())
             },
             async resolve(parent, args, context: Context) {
                 const { prisma } = context;
-                const { id } = args;
+                const { id, paid } = args;
 
                 const newPayment = await prisma.payment.update({
                     where: {
                         id
                     },
                     data: {
-                        isPaid: true
+                        isPaid: paid
                     }
                 });
 

@@ -30,7 +30,7 @@ type Mutation {
   deletePaypal(id: Int!): Paypal
   deleteSepa(id: Int!): Sepa
   login(password: String!, username: String!): AuthPayload!
-  markPaymentPaid(id: Int!): Payment
+  setPaymentPaid(id: Int!, paid: Boolean!): Payment
   signup(email: String!, firstName: String!, lastName: String!, password: String!, username: String!): AuthPayload!
   updatePayment(amount: String, currency: Currency!, description: String, id: Int!, name: String): Paypal
   updatePaypal(accountName: String, id: Int!, username: String): Paypal

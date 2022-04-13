@@ -105,7 +105,7 @@ export interface NexusGenFieldTypes {
     deletePaypal: NexusGenRootTypes['Paypal'] | null; // Paypal
     deleteSepa: NexusGenRootTypes['Sepa'] | null; // Sepa
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
-    markPaymentPaid: NexusGenRootTypes['Payment'] | null; // Payment
+    setPaymentPaid: NexusGenRootTypes['Payment'] | null; // Payment
     signup: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     updatePayment: NexusGenRootTypes['Paypal'] | null; // Paypal
     updatePaypal: NexusGenRootTypes['Paypal'] | null; // Paypal
@@ -168,7 +168,7 @@ export interface NexusGenFieldTypeNames {
     deletePaypal: 'Paypal'
     deleteSepa: 'Sepa'
     login: 'AuthPayload'
-    markPaymentPaid: 'Payment'
+    setPaymentPaid: 'Payment'
     signup: 'AuthPayload'
     updatePayment: 'Paypal'
     updatePaypal: 'Paypal'
@@ -247,8 +247,9 @@ export interface NexusGenArgTypes {
       password: string; // String!
       username: string; // String!
     }
-    markPaymentPaid: { // args
+    setPaymentPaid: { // args
       id: number; // Int!
+      paid: boolean; // Boolean!
     }
     signup: { // args
       email: string; // String!
