@@ -11,7 +11,6 @@ stop-db: ## Stops and removes local db
 
 run: ## Start local serverless instance of the app
 	@npm run generate-nexus
-	@npm run generate-prisma
 	@npm run dev
 
 package: ## Package for production
@@ -30,5 +29,3 @@ deploy-staging: ## Deploy to prod env
 	@npm i
 	@npm run generate-nexus
 	serverless deploy --stage prod
-
-# npx prisma migrate dev --name init

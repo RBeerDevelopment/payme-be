@@ -19,7 +19,6 @@ functions:
 plugins:
   - serverless-dotenv-plugin
   - serverless-webpack
-  - serverless-webpack-prisma
   - serverless-offline
   - serverless-prune-plugin
 
