@@ -1,6 +1,6 @@
-import { PrismaClient } from "@prisma/client";
 import { extendType, intArg, nonNull, nullable, objectType, stringArg } from "nexus";
 import { Context } from "../context";
+import { SepaEntity } from "../type-orm/entities";
 import { getIbanInfo } from "../validation";
 import { User } from "./user";
 
@@ -14,11 +14,8 @@ export const Sepa = objectType({
         t.nullable.string("accountName");
         t.nonNull.field("user", { 
             type: User,
-            async resolve(parent, args, context : Context) {
-                const sepa = await context.prisma.sepa.findUnique({
-                    where: { id: parent.id },
-                    include: { user: true }
-                });
+            async resolve(parent) {
+                const sepa = await SepaEntity.findOneOrFail({ where: { id: parent.id }, relations: ["user"] });
 
                 return sepa?.user;
             }
@@ -36,8 +33,8 @@ export const SepaMutation = extendType({
                 iban: nonNull(stringArg()),
                 accountName: nullable(stringArg())
             },
-            async resolve(parent, args, context: Context) {
-                const { prisma, userId } = context;
+            async resolve(parent, args, { userId}: Context) {
+
                 const { iban, accountName } = args;
 
                 await hasAccess(userId);
@@ -46,21 +43,17 @@ export const SepaMutation = extendType({
                 if(!ibanInfo) {
                     throw new Error("Invalid IBAN.");
                 }
-                const sepa = await prisma.sepa.create({
-                    data: {
-                        iban: ibanInfo.iban,
-                        bic: ibanInfo.bic,
-                        bankName: ibanInfo.bankName,
-                        accountName,
-                        user: {
-                            connect: {
-                                id: userId
-                            }
-                        }
-                    }
-                });
+                
+                const paypal = await SepaEntity.addSepa(
+                    iban, 
+                    ibanInfo.bic, 
+                    ibanInfo.bankName, 
+                    userId || -1,
+                    accountName
+                );
 
-                return(sepa);
+                return paypal;
+
             }
         }),
         t.field("updateSepa", {
@@ -72,46 +65,45 @@ export const SepaMutation = extendType({
                 bic: nullable(stringArg()),
                 bankName: nullable(stringArg())
             },
-            async resolve(parent, args, context: Context) {
-                const { prisma, userId } = context;
+            async resolve(parent, args, { userId }: Context) {
                 const { id, accountName, iban, bic, bankName } = args;
 
-                await hasAccess(userId, id, prisma);
+                // await hasAccess(userId, id, prisma);
 
-                if(!iban) {
-                    const newSepa = await prisma.sepa.update({
-                        where: {
-                            id
-                        },
-                        data: {
-                            accountName,
-                            bic,
-                            bankName
-                        }
-                    });
+                // if(!iban) {
+                //     const newSepa = await prisma.sepa.update({
+                //         where: {
+                //             id
+                //         },
+                //         data: {
+                //             accountName,
+                //             bic,
+                //             bankName
+                //         }
+                //     });
 
-                    return newSepa;
-                }
+                //     return newSepa;
+                // }
                 
-                const ibanInfo = await getIbanInfo(iban);
-                if(!ibanInfo) {
-                    throw new Error("Invalid IBAN.");
-                }
+                // const ibanInfo = await getIbanInfo(iban);
+                // if(!ibanInfo) {
+                //     throw new Error("Invalid IBAN.");
+                // }
 
-                const newSepa = await prisma.sepa.update({
-                    where: {
-                        id
-                    },
-                    data: {
-                        iban: ibanInfo.iban,
-                        // check if there is a way to validate a bic
-                        bic: bic ? bic : ibanInfo.bic,
-                        bankName: bankName ? bankName : ibanInfo.bankName,
-                        accountName
-                    }
-                });
+                // const newSepa = await prisma.sepa.update({
+                //     where: {
+                //         id
+                //     },
+                //     data: {
+                //         iban: ibanInfo.iban,
+                //         // check if there is a way to validate a bic
+                //         bic: bic ? bic : ibanInfo.bic,
+                //         bankName: bankName ? bankName : ibanInfo.bankName,
+                //         accountName
+                //     }
+                // });
 
-                return newSepa;
+                // return newSepa;
             }
         }),
         t.field("deleteSepa", {
@@ -119,24 +111,23 @@ export const SepaMutation = extendType({
             args: {
                 id: nonNull(intArg())
             },
-            async resolve(parent, args, context: Context) {
-                const { prisma, userId } = context;
+            async resolve(parent, args, { userId }: Context) {
                 const { id } = args;
 
-                await hasAccess(userId, id, prisma);
+                await hasAccess(userId, id);
                 
-                const sepa = await prisma.sepa.delete({
-                    where: { id }
-                });
+                const sepa = await SepaEntity.findOneByOrFail({ id });
 
-                return(sepa);
+                await sepa.remove();
+
+                return sepa;
             }
         });
 
     },
 });
 
-async function hasAccess(userId: number | undefined, sepaId?: number, prisma?: PrismaClient): Promise<boolean> {
+async function hasAccess(userId: number | undefined, sepaId?: number): Promise<boolean> {
 
     if(!userId) {
         throw new Error("User not signed in.");
@@ -146,15 +137,11 @@ async function hasAccess(userId: number | undefined, sepaId?: number, prisma?: P
         return true;
     } 
 
-    if(!prisma) {
-        throw new Error("Internal Error, missing DB client");
-    }
+    // const currentSepa = await prisma.sepa.findUnique({ where: { id: sepaId }});
 
-    const currentSepa = await prisma.sepa.findUnique({ where: { id: sepaId }});
-
-    if(currentSepa?.userId !== userId) {
-        throw new Error("No access to edit this SEPA account.");
-    }
+    // if(currentSepa?.userId !== userId) {
+    //     throw new Error("No access to edit this SEPA account.");
+    // }
 
     return true;
                 

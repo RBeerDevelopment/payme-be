@@ -1,8 +1,8 @@
-import { PrismaClient } from "@prisma/client";
 import { arg, booleanArg, extendType, floatArg, intArg, nonNull, nullable, objectType, stringArg } from "nexus";
 import { Context } from "../context";
 import { User } from "./user";
 import { Currency } from "./currency";
+import { PaymentRequestEntity } from "../type-orm/entities";
 
 export const Payment = objectType({
     name: "Payment",
@@ -16,23 +16,21 @@ export const Payment = objectType({
         t.nonNull.boolean("isPaid");
         t.nonNull.field("createdBy", { 
             type: User,
-            async resolve(parent, args, context: Context) {
-                const payment = await context.prisma.payment.findUnique({
-                    where: { id: parent.id },
-                    include: { createdBy: true }
-                });
+            async resolve(parent) {
+                const payment = await PaymentRequestEntity.findOneOrFail({ where: { id: parent.id }, relations: ["user"] });
 
-                return payment?.createdBy;
+                return payment?.user;
             }
         });   
         t.nonNull.field("createdAt", {
             type: "DateTime",
-            async resolve(parent, args, context: Context) {
-                const payment = await context.prisma.payment.findUnique({
-                    where: { id: parent.id }
-                });
+            async resolve(parent) {
 
-                return payment?.createdAt;
+                // const payment = await context.prisma.payment.findUnique({
+                //     where: { id: parent.id }
+                // });
+
+                // return payment?.createdAt;
             }
         });
     },
@@ -45,10 +43,10 @@ export const PaymentQuery = extendType({
         t.nullable.field("payment", {
             type: "Payment",
             args: { id: intArg() },
-            resolve(parent, args, { prisma }: Context) {
+            resolve(parent, args) {
 
                 const { id } = args;
-                return prisma.payment.findUnique({ where: { id }});
+                return PaymentRequestEntity.findOneByOrFail({ id });
             },
         });
     },
@@ -69,24 +67,12 @@ export const PaymentMutation = extendType({
                 }))
             },
             async resolve(parent, args, context: Context) {
-                const { prisma, userId } = context;
+                const { userId } = context;
                 const { name, description, amount, currency } = args;
 
                 await hasAccess(userId);
                 
-                const payment = await prisma.payment.create({
-                    data: {
-                        name,
-                        description,
-                        amount,
-                        currency,
-                        createdBy: {
-                            connect: {
-                                id: userId
-                            }
-                        }
-                    }
-                });
+                const payment = await PaymentRequestEntity.addPayment(name, amount, currency, userId || -1, description );
 
                 return payment;
             }
@@ -97,20 +83,16 @@ export const PaymentMutation = extendType({
                 id: nonNull(intArg()),
                 paid: nonNull(booleanArg())
             },
-            async resolve(parent, args, context: Context) {
-                const { prisma } = context;
+            async resolve(parent, args) {
                 const { id, paid } = args;
 
-                const newPayment = await prisma.payment.update({
-                    where: {
-                        id
-                    },
-                    data: {
-                        isPaid: paid
-                    }
-                });
+                const payment = await PaymentRequestEntity.findOneByOrFail({ id });
 
-                return newPayment;
+                payment.isPaid = paid;
+
+                await payment.save();
+
+                return payment;
             }
         }),
         t.field("updatePayment", {
@@ -124,25 +106,24 @@ export const PaymentMutation = extendType({
                     type: Currency,
                 }))
             },
-            async resolve(parent, args, context: Context) {
-                const { prisma, userId } = context;
+            async resolve(parent, args, { userId }: Context) {
                 const { id, name, description, amount, currency } = args;
 
-                await hasAccess(userId, id, prisma);
+                // await hasAccess(userId, id, prisma);
 
-                const newPayment = await prisma.payment.update({
-                    where: {
-                        id
-                    },
-                    data: {
-                        name,
-                        description,
-                        amount,
-                        currency
-                    }
-                });
+                // const newPayment = await prisma.payment.update({
+                //     where: {
+                //         id
+                //     },
+                //     data: {
+                //         name,
+                //         description,
+                //         amount,
+                //         currency
+                //     }
+                // });
 
-                return newPayment;
+                // return newPayment;
             }
         }),
         t.field("deletePayment", {
@@ -150,24 +131,23 @@ export const PaymentMutation = extendType({
             args: {
                 id: nonNull(intArg())
             },
-            async resolve(parent, args, context: Context) {
-                const { prisma, userId } = context;
+            async resolve(parent, args, { userId }: Context) {
                 const { id } = args;
 
-                await hasAccess(userId, id, prisma);
+                await hasAccess(userId, id);
                 
-                const payment = await prisma.payment.delete({
-                    where: { id }
-                });
+                const payment = await PaymentRequestEntity.findOneByOrFail({ id });
 
-                return(payment);
+                await payment.remove();
+
+                return payment;
             }
         });
 
     },
 });
 
-async function hasAccess(userId: number | undefined, paymentId?: number, prisma?: PrismaClient): Promise<boolean> {
+async function hasAccess(userId: number | undefined, paymentId?: number): Promise<boolean> {
 
     if(!userId) {
         throw new Error("User not signed in.");
@@ -175,15 +155,12 @@ async function hasAccess(userId: number | undefined, paymentId?: number, prisma?
 
     if(!paymentId) {
         return true;
-    } 
-
-    if(!prisma) {
-        throw new Error("Internal Error, missing DB client");
     }
 
-    const payment = await prisma.payment.findUnique({ where: { id: paymentId }});
+    const payment = await PaymentRequestEntity.findOneByOrFail({ id: paymentId });
 
-    if(payment?.userId !== userId) {
+
+    if(payment?.user.id !== userId) {
         throw new Error("No access to edit this Payment.");
     }
 

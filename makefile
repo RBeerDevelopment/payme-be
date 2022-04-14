@@ -24,7 +24,7 @@ deploy-staging: ## Deploy to staging env
 	@npm run generate-nexus
 	serverless deploy --stage staging
 
-deploy-staging: ## Deploy to prod env
+deploy-prod: ## Deploy to prod env
 	rm -rf node_modules
 	@npm i
 	@npm run generate-nexus

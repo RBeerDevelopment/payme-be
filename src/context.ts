@@ -1,11 +1,8 @@
-import { PrismaClient } from "@prisma/client";
 import { decodeAuthHeader } from "./utils";
 import { ExpressContext } from "apollo-server-express";
 
-export const prisma = new PrismaClient();
-
 export interface Context {
-    prisma: PrismaClient
+    prisma?: Record<string, string>
     userId?: number
 }
 
@@ -17,7 +14,7 @@ export function context({ express }: { express: ExpressContext }): Context {
             : null;
 
     return {
-        prisma,
+        prisma: {},
         userId: tokenPayload?.userId
     };
 }

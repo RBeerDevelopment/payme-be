@@ -1,6 +1,6 @@
-import { PrismaClient } from "@prisma/client";
 import { extendType, intArg, nonNull, nullable, objectType, stringArg } from "nexus";
 import { Context } from "../context";
+import { PaypalEntity } from "../type-orm/entities";
 import { User } from "./user";
 
 export const Paypal = objectType({
@@ -11,11 +11,8 @@ export const Paypal = objectType({
         t.nonNull.string("accountName");
         t.nonNull.field("user", { 
             type: User,
-            async resolve(parent, args, context : Context) {
-                const paypal = await context.prisma.paypal.findUnique({
-                    where: { id: parent.id },
-                    include: { user: true }
-                });
+            async resolve(parent) {
+                const paypal = await PaypalEntity.findOneOrFail({ where: { id: parent.id }, relations: ["user"] });
 
                 return paypal?.user;
             }
@@ -34,24 +31,14 @@ export const PaypalMutation = extendType({
                 accountName: nullable(stringArg())
             },
             async resolve(parent, args, context: Context) {
-                const { prisma, userId } = context;
+                const { userId } = context;
                 const { username, accountName } = args;
 
                 await hasAccess(userId);
                 
-                const paypal = await prisma.paypal.create({
-                    data: {
-                        username,
-                        accountName,
-                        user: {
-                            connect: {
-                                id: userId
-                            }
-                        }
-                    }
-                });
+                const paypal = await PaypalEntity.addPaypal(username, userId || -1, accountName);
 
-                return(paypal);
+                return paypal;
             }
         }),
         t.field("updatePaypal", {
@@ -65,19 +52,19 @@ export const PaypalMutation = extendType({
                 const { prisma, userId } = context;
                 const { id, accountName, username } = args;
 
-                await hasAccess(userId, id, prisma);
+                // await hasAccess(userId, id, prisma);
 
-                const newPaypal = await prisma.paypal.update({
-                    where: {
-                        id
-                    },
-                    data: {
-                        accountName,
-                        username
-                    }
-                });
+                // const newPaypal = await prisma.paypal.update({
+                //     where: {
+                //         id
+                //     },
+                //     data: {
+                //         accountName,
+                //         username
+                //     }
+                // });
 
-                return newPaypal;
+                // return newPaypal;
             }
         }),
         t.field("deletePaypal", {
@@ -85,24 +72,23 @@ export const PaypalMutation = extendType({
             args: {
                 id: nonNull(intArg())
             },
-            async resolve(parent, args, context: Context) {
-                const { prisma, userId } = context;
+            async resolve(parent, args, { userId }: Context) {
                 const { id } = args;
 
-                await hasAccess(userId, id, prisma);
+                await hasAccess(userId, id);
                 
-                const paypal = await prisma.paypal.delete({
-                    where: { id }
-                });
+                const paypal = await PaypalEntity.findOneByOrFail({ id });
 
-                return(paypal);
+                await paypal.remove();
+
+                return paypal;
             }
         });
 
     },
 });
 
-async function hasAccess(userId: number | undefined, paypalId?: number, prisma?: PrismaClient): Promise<boolean> {
+async function hasAccess(userId: number | undefined, paypalId?: number): Promise<boolean> {
 
     if(!userId) {
         throw new Error("User not signed in.");
@@ -112,17 +98,14 @@ async function hasAccess(userId: number | undefined, paypalId?: number, prisma?:
         return true;
     } 
 
-    if(!prisma) {
-        throw new Error("Internal Error, missing DB client");
-    }
 
-    const currentPaypal = await prisma.paypal.findUnique({ where: { id: paypalId }});
+    // const currentPaypal = await prisma.paypal.findUnique({ where: { id: paypalId }});
 
-    if(currentPaypal?.userId !== userId) {
-        console.log({ sepaUserId: currentPaypal?.userId, userId });
+    // if(currentPaypal?.userId !== userId) {
+    //     console.log({ sepaUserId: currentPaypal?.userId, userId });
 
-        throw new Error("No access to edit this Pappal account.");
-    }
+    //     throw new Error("No access to edit this Pappal account.");
+    // }
 
     return true;
                 

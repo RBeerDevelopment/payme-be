@@ -2,6 +2,8 @@ import { booleanArg, extendType, nullable, objectType, stringArg } from "nexus";
 import { Paypal } from ".";
 import { AwsFileUploader } from "../aws/s3/s3-upload";
 import { Context } from "../context";
+import { dataSource } from "../type-orm/data-source";
+import { SepaEntity, UserEntity } from "../type-orm/entities";
 import { Payment } from "./payment";
 import { Sepa } from "./sepa";
 
@@ -18,24 +20,27 @@ export const User = objectType({
         t.nonNull.list.field("sepa", { 
             type: Sepa,
             resolve(parent, args, context: Context) {
-                return context.prisma.sepa.findMany({
-                    where: { userId: parent.id }
-                });
+                
+                return [];
+                // return context.prisma.sepa.findMany({
+                //     where: { userId: parent.id }
+                // });
             }
         }); 
         t.nonNull.list.field("paypal", {
             type: Paypal,
             resolve(parent, args, context: Context) {
-                return context.prisma.paypal.findMany({
-                    where: { userId: parent.id }
-                });
+
+                return [];
+
+                // return context.prisma.paypal.findMany({
+                //     where: { userId: parent.id }
+                // });
             }
         });
         t.nullable.string("avatarUrl", {
-            async resolve(parent, args, context: Context) {
-                const user = await context.prisma.user.findUnique({
-                    where: { id: parent.id }
-                });
+            async resolve(parent) {
+                const user = await UserEntity.findOneByOrFail({ id: parent.id });
                 const awsFileClient = new AwsFileUploader();
                 if(!user?.avatarPath) {
                     return "";
@@ -45,16 +50,18 @@ export const User = objectType({
         });
         t.nonNull.list.field("payments", {
             type: Payment,
-            resolve(parent, args, context: Context) {
+            resolve(parent, args) {
+
+                return [];
 
                 const { onlyActive } = args;
 
-                return context.prisma.payment.findMany({
-                    where: {
-                        userId: parent.id,
-                        ...(onlyActive && { isPaid: true })
-                    }                    
-                });
+                // return context.prisma.payment.findMany({
+                //     where: {
+                //         userId: parent.id,
+                //         ...(onlyActive && { isPaid: true })
+                //     }                    
+                // });
             }
         });
     },
@@ -65,19 +72,19 @@ export const UserQuery = extendType({
     definition(t) {
         t.nonNull.list.nullable.field("users", {
             type: "User",
-            resolve(parent, args, { userId, prisma }: Context) {
+            resolve(parent, args, { userId }: Context) {
 
                 if (!userId) {
                     throw new Error("User not signed in.");
                 }
 
-                return prisma.user.findMany({});
+                return UserEntity.find();
             },
         }),
         t.nullable.field("user", {
             type: "User",
             args: { username: stringArg(), onlyActive: nullable(booleanArg()) },
-            resolve(parent, { username, onlyActive }, { userId, prisma }: Context) {
+            async resolve(parent, { username }, { userId }: Context) {
 
                 if (!userId) {
                     throw new Error("User not signed in.");
@@ -86,7 +93,10 @@ export const UserQuery = extendType({
                     throw new Error("No username provided.");
                 }
 
-                return prisma.user.findFirst({ where: { username }});
+                if(!dataSource.isInitialized) {
+                    await dataSource.initialize();
+                }
+                return UserEntity.findOneByOrFail({ username });
             },
         })
         ;

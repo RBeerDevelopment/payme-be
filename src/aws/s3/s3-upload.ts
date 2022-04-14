@@ -70,13 +70,13 @@ export class AwsFileUploader {
 
     async createSignedUrl(fileKey: string): Promise<string | undefined> {
         try {
-            const url = await getSignedUrl(this.client, new GetObjectCommand({
-                Bucket: this.bucketName,
-                Key: fileKey
-            }), { expiresIn: 10 * 60 });
-            return url;
+            // const url = await getSignedUrl(this.client, new GetObjectCommand({
+            //     Bucket: this.bucketName,
+            //     Key: fileKey
+            // }), { expiresIn: 10 * 60 });
+            return "";//url;
         } catch {
-            return undefined;
+            return;
         }
     }
 }

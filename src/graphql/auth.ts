@@ -1,6 +1,8 @@
 import { compare as bcCompare, hash as bcHash } from "bcryptjs";
 import { sign } from "jsonwebtoken";
 
+import { UserEntity } from "../type-orm/entities";
+
 import { extendType, nonNull, objectType, stringArg } from "nexus";
 import { generateAvatar, uploadAvatar } from "../avatar";
 import { Context } from "../context";
@@ -27,13 +29,11 @@ export const AuthMutation = extendType({
                 username: nonNull(stringArg()),
                 password: nonNull(stringArg()),
             },
-            async resolve(parent, args, { prisma }: Context) {
+            async resolve(parent, args, context: Context) {
 
                 const { username, password } = args;
-                const user = await prisma.user.findUnique({
-                    where: { username },
-                });
-                
+                const user = await UserEntity.findOne({ where: { username }});
+
                 if (!user) {
                     throw new Error("No such user found");
                 }
@@ -51,12 +51,14 @@ export const AuthMutation = extendType({
                     exp: oneHourFromNow()
                 }, APP_SECRET);
 
-                prisma.user.update({
-                    where: { id: user.id },
-                    data: {
-                        lastSignin: getNowAsISO()
-                    }
-                });
+                
+                // TODO
+                // prisma.user.update({
+                //     where: { id: user.id },
+                //     data: {
+                //         lastSignin: getNowAsISO()
+                //     }
+                // });
 
                 return {
                     token,
@@ -84,20 +86,21 @@ export const AuthMutation = extendType({
                 const passwordHash = await bcHash(password, 10);
 
                 const avatar = generateAvatar(username);
-                console.log({ avatar });
                 const avatarFilePath = await uploadAvatar(username, avatar);
-                console.log({ avatarFilePath });
 
-                const user = await context.prisma.user.create({
-                    data: {
-                        email,
-                        username,
-                        firstName,
-                        lastName,
-                        passwordHash,
-                        avatarPath: avatarFilePath
-                    },
-                });
+
+                const user = await UserEntity.addUser(
+                    firstName,
+                    lastName,
+                    username,
+                    email,
+                    passwordHash,
+                    avatarFilePath
+                );
+
+                if(!user) {
+                    throw new Error("Could not create user");
+                }
 
                 const token = sign({ 
                     userId: user.id,
