@@ -5,46 +5,46 @@ on:
         branches: [main, develop]
 
 jobs:
-    deploy:
-        name: deploy
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                node-version: [14.2.0]
-        steps:
-            - uses: actions/checkout@v2
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v1
-              with:
-                  node-version: ${{ matrix.node-version }}
-                  cache: 'npm'
-            - name: Make envfile (for use with prisma)
-              uses: SpicyPizza/create-envfile@v1
-              with:
-                envkey_APP_SECRET: ${{secrets.APP_SECRET}}
-                envkey_DATABASE_URL: ${{secrets.DATABASE_URL}}
-                envkey_SHADOW_DATABASE_URL: ${{secrets.SHADOW_DATABASE_URL}}
-                # envkey_AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
-                # envkey_AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-                envkey_AWS_S3_BUCKET: ${{secrets.AWS_S3_BUCKET}}
-                envkey_AWS_S3_REGION: "eu-central-1"
+    # deploy:
+    #     name: deploy
+    #     runs-on: ubuntu-latest
+    #     strategy:
+    #         matrix:
+    #             node-version: [14.2.0]
+    #     steps:
+    #         - uses: actions/checkout@v2
+    #         - name: Use Node.js ${{ matrix.node-version }}
+    #           uses: actions/setup-node@v1
+    #           with:
+    #               node-version: ${{ matrix.node-version }}
+    #               cache: 'npm'
+    #         - name: Make envfile (for use with prisma)
+    #           uses: SpicyPizza/create-envfile@v1
+    #           with:
+    #             envkey_APP_SECRET: ${{secrets.APP_SECRET}}
+    #             envkey_DATABASE_URL: ${{secrets.DATABASE_URL}}
+    #             envkey_SHADOW_DATABASE_URL: ${{secrets.SHADOW_DATABASE_URL}}
+    #             # envkey_AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+    #             # envkey_AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+    #             envkey_AWS_S3_BUCKET: ${{secrets.AWS_S3_BUCKET}}
+    #             envkey_AWS_S3_REGION: "eu-central-1"
 
 
-            - run: rm -rf node_modules && npm ci
-            - name: serverless deploy PROD
-              if: ${{ github.ref == 'refs/heads/master' }}
-              uses: serverless/github-action@master
-              with:
-                  args: deploy --stage prod
-              env:
-                  AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
-                  AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+    #         - run: rm -rf node_modules && npm ci
+    #         - name: serverless deploy PROD
+    #           if: ${{ github.ref == 'refs/heads/master' }}
+    #           uses: serverless/github-action@master
+    #           with:
+    #               args: deploy --stage prod
+    #           env:
+    #               AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+    #               AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
             
-            - name: serverless deploy STAGING
-              if: ${{ github.ref == 'refs/heads/develop' }}
-              uses: serverless/github-action@master
-              with:
-                  args: deploy --stage staging
-              env:
-                  AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
-                  AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+    #         - name: serverless deploy STAGING
+    #           if: ${{ github.ref == 'refs/heads/develop' }}
+    #           uses: serverless/github-action@master
+    #           with:
+    #               args: deploy --stage staging
+    #           env:
+    #               AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+    #               AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}

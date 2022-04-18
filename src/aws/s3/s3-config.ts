@@ -1,3 +1,5 @@
+import "dotenv/config";
+
 export const s3Config = {
     s3: {
         credentials: {

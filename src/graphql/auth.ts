@@ -84,9 +84,7 @@ export const AuthMutation = extendType({
                 const passwordHash = await bcHash(password, 10);
 
                 const avatar = generateAvatar(username);
-                console.log({ avatar });
                 const avatarFilePath = await uploadAvatar(username, avatar);
-                console.log({ avatarFilePath });
 
                 const user = await context.prisma.user.create({
                     data: {
