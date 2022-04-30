@@ -9,26 +9,9 @@ start-db: ## Start local db
 stop-db: ## Stops and removes local db
 	docker rm -f payme-postgres
 
-run: ## Start local serverless instance of the app
-	@npm run generate-nexus
-	@npm run generate-prisma
-	@npm run dev
-
-package: ## Package for production
-	@npm i
-	@npm run generate-nexus
-	sls package --verbose
-
-deploy-staging: ## Deploy to staging env
-	rm -rf node_modules
-	@npm i
-	@npm run generate-nexus
-	serverless deploy --stage staging
-
-deploy-staging: ## Deploy to prod env
-	rm -rf node_modules
-	@npm i
-	@npm run generate-nexus
-	serverless deploy --stage prod
+run: ## Start local instance of the app and connect to planetscale dev instance
+	@pnpm install
+	pscale connect payme dev &
+	@pnpm run dev
 
 # npx prisma migrate dev --name init
