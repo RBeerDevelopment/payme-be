@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { PrismaClient } from "@prisma/client";
 import { extendType, intArg, nonNull, nullable, objectType, stringArg } from "nexus";
 import { Context } from "../context";
@@ -11,6 +12,7 @@ export const Paypal = objectType({
         t.nonNull.string("accountName");
         t.nonNull.field("user", { 
             type: User,
+            // @ts-ignore
             async resolve(parent, args, context : Context) {
                 const paypal = await context.prisma.paypal.findUnique({
                     where: { id: parent.id },
@@ -33,6 +35,7 @@ export const PaypalMutation = extendType({
                 username: nonNull(stringArg()),
                 accountName: nullable(stringArg())
             },
+            // @ts-ignore
             async resolve(parent, args, context: Context) {
                 const { prisma, userId } = context;
                 const { username, accountName } = args;
@@ -42,7 +45,7 @@ export const PaypalMutation = extendType({
                 const paypal = await prisma.paypal.create({
                     data: {
                         username,
-                        accountName,
+                        accountName: accountName || "",
                         user: {
                             connect: {
                                 id: userId
@@ -67,13 +70,14 @@ export const PaypalMutation = extendType({
 
                 await hasAccess(userId, id, prisma);
 
+
                 const newPaypal = await prisma.paypal.update({
                     where: {
                         id
                     },
                     data: {
-                        accountName,
-                        username
+                        accountName: accountName || undefined,
+                        username: username || undefined
                     }
                 });
 

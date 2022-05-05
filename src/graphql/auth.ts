@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { compare as bcCompare, hash as bcHash } from "bcryptjs";
 import { sign } from "jsonwebtoken";
 
@@ -27,6 +28,7 @@ export const AuthMutation = extendType({
                 username: nonNull(stringArg()),
                 password: nonNull(stringArg()),
             },
+            // @ts-ignore
             async resolve(parent, args, { prisma }: Context) {
 
                 const { username, password } = args;
@@ -60,7 +62,7 @@ export const AuthMutation = extendType({
 
                 return {
                     token,
-                    user,
+                    user
                 };
             },
         }), t.nonNull.field("signup", { // 1
@@ -72,6 +74,7 @@ export const AuthMutation = extendType({
                 lastName: nonNull(stringArg()),
                 password: nonNull(stringArg())
             },
+            // @ts-ignore
             async resolve(parent, args, context: Context) {
                 const { email, username, firstName, lastName, password } = args;
 

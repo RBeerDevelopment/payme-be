@@ -14,6 +14,8 @@ export const Sepa = objectType({
         t.nullable.string("accountName");
         t.nonNull.field("user", { 
             type: User,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             async resolve(parent, args, context : Context) {
                 const sepa = await context.prisma.sepa.findUnique({
                     where: { id: parent.id },
@@ -85,8 +87,8 @@ export const SepaMutation = extendType({
                         },
                         data: {
                             accountName,
-                            bic,
-                            bankName
+                            bic: bic || undefined,
+                            bankName: bankName || undefined
                         }
                     });
 

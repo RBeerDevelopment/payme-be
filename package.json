@@ -3,12 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "pnpm prisma generate && pnpm run generate && ts-node-dev --transpile-only --no-notify --exit-child src/index.ts",
-    "generate": "ts-node --transpile-only src/schema",
+    "dev": "prisma generate && generate && ts-node-dev --transpile-only --no-notify --exit-child src/index.ts",
+    "generate": "tsc -p .",
     "migrate:deploy": "prisma migrate deploy",
-    "build": "pnpm prisma generate && pnpm run generate",
-    "start": "node dist/src/index.js"
+    "generate-prisma": "prisma generate"
   },
   "keywords": [],
   "author": "Robin Beer",
@@ -27,7 +25,10 @@
     "jsonwebtoken": "^8.5.1",
     "nexus": "^1.2.0",
     "openiban": "^1.0.1",
-    "svgo": "^2.8.0"
+    "prisma": "^3.13.0",
+    "svgo": "^2.8.0",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.4"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
@@ -36,8 +37,6 @@
     "@types/svgo": "^2.6.2",
     "@typescript-eslint/eslint-plugin": "^5.10.2",
     "@typescript-eslint/parser": "^5.10.2",
-    "eslint": "^8.8.0",
-    "prisma": "^3.9.2",
-    "typescript": "^4.5.5"
+    "eslint": "^8.8.0"
   }
 }

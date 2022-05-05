@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import { Payment as PrismaPayment, User as PrismaUser } from "@prisma/client";
 import { booleanArg, extendType, nullable, objectType, stringArg } from "nexus";
 import { Paypal } from ".";
 import { AwsFileUploader } from "../aws/s3/s3-upload";
@@ -19,7 +21,7 @@ export const User = objectType({
             type: Sepa,
             resolve(parent, args, context: Context) {
                 return context.prisma.sepa.findMany({
-                    where: { userId: parent.id }
+                    where: { userId: parseInt(parent.id) }
                 });
             }
         }); 
@@ -27,34 +29,35 @@ export const User = objectType({
             type: Paypal,
             resolve(parent, args, context: Context) {
                 return context.prisma.paypal.findMany({
-                    where: { userId: parent.id }
+                    where: { userId: parseInt(parent.id) }
                 });
             }
         });
-        t.nullable.string("avatarUrl", {
-            async resolve(parent, args, context: Context) {
-                const user = await context.prisma.user.findUnique({
-                    where: { id: parent.id }
-                });
-                const awsFileClient = new AwsFileUploader();
-                if(!user?.avatarPath) {
-                    return "";
-                }
-                return awsFileClient.createSignedUrl(user?.avatarPath);
+        t.nullable.string("avatarUrl", { async resolve(parent, args, context: Context) {
+            const user = await context.prisma.user.findUnique({
+                where: { id: parseInt(parent.id) }
+            });
+            const awsFileClient = new AwsFileUploader();
+            if(!user?.avatarPath) {
+                return "";
             }
+            return await awsFileClient.createSignedUrl(user?.avatarPath) || "";
+        }
         });
         t.nonNull.list.field("payments", {
             type: Payment,
-            resolve(parent, args, context: Context) {
+            // @ts-ignore
+            async resolve(parent, { onlyActive }, context: Context): Promise<PrismaPayment[]> {
 
-                const { onlyActive } = args;
 
-                return context.prisma.payment.findMany({
+                const payments = await context.prisma.payment.findMany({
                     where: {
                         userId: parent.id,
                         ...(onlyActive && { isPaid: true })
                     }                    
                 });
+
+                return payments || [];
             }
         });
     },
@@ -65,6 +68,7 @@ export const UserQuery = extendType({
     definition(t) {
         t.nonNull.list.nullable.field("users", {
             type: "User",
+            // @ts-ignore
             resolve(parent, args, { userId, prisma }: Context) {
 
                 if (!userId) {
@@ -77,7 +81,11 @@ export const UserQuery = extendType({
         t.nullable.field("user", {
             type: "User",
             args: { username: stringArg(), onlyActive: nullable(booleanArg()) },
-            resolve(parent, { username, onlyActive }, { userId, prisma }: Context) {
+            // @ts-ignore
+            async resolve(parent, args, ctx) {
+
+                const { username } = args;
+                const { userId, prisma } = ctx;
 
                 if (!userId) {
                     throw new Error("User not signed in.");
@@ -86,7 +94,7 @@ export const UserQuery = extendType({
                     throw new Error("No username provided.");
                 }
 
-                return prisma.user.findFirst({ where: { username }});
+                return await prisma.user.findFirst({ where: { username }});
             },
         })
         ;
