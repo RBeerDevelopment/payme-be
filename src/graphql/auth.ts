@@ -4,6 +4,7 @@ import { sign } from "jsonwebtoken";
 
 import { extendType, nonNull, objectType, stringArg } from "nexus";
 import { generateAvatar, uploadAvatar } from "../avatar";
+import { SESender } from "../aws/ses/send-ses-mail";
 import { Context } from "../context";
 import { APP_SECRET, getNowAsISO, oneHourFromNow } from "../utils";
 import { validateEmailAddress, validatePassword } from "../validation";
@@ -17,6 +18,8 @@ export const AuthPayload = objectType({
         });
     },
 });
+
+const mailSender = new SESender();
 
 export const AuthMutation = extendType({
     type: "Mutation",
@@ -99,6 +102,8 @@ export const AuthMutation = extendType({
                         avatarPath: avatarFilePath
                     },
                 });
+
+                mailSender.sendMail(email, username, "https://robin.beer/");
 
                 const token = sign({ 
                     userId: user.id,

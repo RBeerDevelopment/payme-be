@@ -32,7 +32,7 @@ type Mutation {
   login(password: String!, username: String!): AuthPayload!
   setPaymentPaid(id: Int!, paid: Boolean!): Payment
   signup(email: String!, firstName: String!, lastName: String!, password: String!, username: String!): AuthPayload!
-  updatePayment(amount: String, currency: Currency!, description: String, id: Int!, name: String): Paypal
+  updatePayment(amount: Float, currency: Currency!, description: String, id: Int!, name: String): Paypal
   updatePaypal(accountName: String, id: Int!, username: String): Paypal
   updateSepa(accountName: String, bankName: String, bic: String, iban: String, id: Int!): Sepa
 }
@@ -43,7 +43,7 @@ type Payment {
   createdBy: User!
   currency: String!
   description: String
-  id: ID!
+  id: Int!
   isPaid: Boolean!
   name: String!
 }

@@ -54,7 +54,7 @@ export interface NexusGenObjects {
     amount: number; // Float!
     currency: string; // String!
     description?: string | null; // String
-    id: string; // ID!
+    id: number; // Int!
     isPaid: boolean; // Boolean!
     name: string; // String!
   }
@@ -117,7 +117,7 @@ export interface NexusGenFieldTypes {
     createdBy: NexusGenRootTypes['User']; // User!
     currency: string; // String!
     description: string | null; // String
-    id: string; // ID!
+    id: number; // Int!
     isPaid: boolean; // Boolean!
     name: string; // String!
   }
@@ -180,7 +180,7 @@ export interface NexusGenFieldTypeNames {
     createdBy: 'User'
     currency: 'String'
     description: 'String'
-    id: 'ID'
+    id: 'Int'
     isPaid: 'Boolean'
     name: 'String'
   }
@@ -259,7 +259,7 @@ export interface NexusGenArgTypes {
       username: string; // String!
     }
     updatePayment: { // args
-      amount?: string | null; // String
+      amount?: number | null; // Float
       currency: NexusGenEnums['Currency']; // Currency!
       description?: string | null; // String
       id: number; // Int!

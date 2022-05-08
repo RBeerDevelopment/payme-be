@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+  payme-be:
+    build: 
+      context: .
+      dockerfile: Dockerfile.dev
+    image: payme-be:dev 
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./src:/app/src:rw"

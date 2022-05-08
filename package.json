@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.52.0",
+    "@aws-sdk/client-ses": "^3.85.0",
     "@aws-sdk/s3-request-presigner": "^3.52.0",
     "@dicebear/avatars": "^4.10.2",
     "@dicebear/avatars-bottts-sprites": "^4.10.2",

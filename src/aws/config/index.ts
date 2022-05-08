@@ -1,0 +1,1 @@
+export { awsConfig } from "./config"

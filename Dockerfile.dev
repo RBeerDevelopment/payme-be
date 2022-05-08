@@ -4,7 +4,7 @@ EXPOSE 3000
 
 RUN apk add --no-cache npm
 
-RUN npm install -g pnpm@next-7
+RUN npm install -g pnpm@next-7 nodemon ts-node
 
 RUN mkdir /app
 WORKDIR /app
@@ -15,7 +15,8 @@ RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN pnpm run generate-prisma
-RUN pnpm run generate
+RUN rm -rf ./src
 
-ENTRYPOINT [ "node", "/app/dist/src/index.js" ]
+RUN pnpm run generate-prisma
+
+ENTRYPOINT ["npx", "nodemon"]

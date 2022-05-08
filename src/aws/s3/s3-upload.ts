@@ -3,21 +3,21 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 
 import { File, UploadedFile } from "./models";
-import { s3Config } from "./s3-config";
+import { awsConfig } from "../config";
 
 
 export class AwsFileUploader {
 
     private client: S3Client;
     private clientConfig: S3ClientConfig;
-    private readonly bucketName = s3Config.s3.params.Bucket;
+    private readonly bucketName = awsConfig.s3.params.Bucket;
 
     constructor() {
         this.clientConfig = {
             credentials: {
-                ...s3Config.s3.credentials
+                ...awsConfig.s3.credentials
             },
-            region: s3Config.s3.region
+            region: awsConfig.s3.region
         };
         this.client = new S3Client(this.clientConfig);
     }
