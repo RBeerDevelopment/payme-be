@@ -87,8 +87,8 @@ export const SepaMutation = extendType({
                         },
                         data: {
                             accountName,
-                            bic: bic || undefined,
-                            bankName: bankName || undefined
+                            ...(bic ? { bic } : {}),
+                            ...(bankName ? { bankName } : {})
                         }
                     });
 

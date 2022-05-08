@@ -5,6 +5,7 @@ import { Context } from "../context";
 import { User } from "./user";
 import { Currency } from "./currency";
 
+
 export const Payment = objectType({
     name: "Payment",
     definition(t) {
@@ -12,28 +13,25 @@ export const Payment = objectType({
         t.nonNull.string("name");
         t.nullable.string("description");
         t.nonNull.float("amount");
-        // may have to be handled
         t.nonNull.string("currency");
         t.nonNull.boolean("isPaid");
         t.nonNull.field("createdBy", { 
             type: User,
             // @ts-ignore
             async resolve(parent, args, context: Context) {
-                // const payment = await context.prisma.payment.findUnique({
-                //     where: { id: parent.id },
-                //     include: { createdBy: true }
-                // });
+                const payment = await context.prisma.payment.findUnique({
+                    where: { id: parent.id },
+                    include: { createdBy: true }
+                });
 
-                return;
-
-                // return payment.;
+                return payment?.createdBy;
             }
         });   
         t.nonNull.field("createdAt", {
             type: "DateTime",
             async resolve(parent, args, context: Context) {
                 const payment = await context.prisma.payment.findUnique({
-                    where: { id: parseInt(parent.id) }
+                    where: { id: parent.id }
                 });
 
                 return payment?.createdAt;
@@ -145,7 +143,7 @@ export const PaymentMutation = extendType({
                     data: {
                         name: name ?? undefined,
                         description,
-                        amount: parseFloat(amount || "") ?? undefined,
+                        ...(amount ? { amount } : {}),
                         currency
                     }
                 });

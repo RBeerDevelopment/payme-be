@@ -76,8 +76,8 @@ export const PaypalMutation = extendType({
                         id
                     },
                     data: {
-                        accountName: accountName || undefined,
-                        username: username || undefined
+                        ...(accountName ? { accountName } : {}),
+                        ...(username ? { username } : {}),
                     }
                 });
 
