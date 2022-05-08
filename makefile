@@ -13,6 +13,5 @@ dev: ## Start dev instance with hot-reloading on code changes
 	docker build -t payme-be:dev -f Dockerfile.dev .
 	docker compose -f docker-compose.dev.yml up payme-be 
 
-
-run-ci:
-	@pnpm 
+update-db:
+	npx prisma db push

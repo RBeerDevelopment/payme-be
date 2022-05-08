@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Payment as PrismaPayment, User as PrismaUser } from "@prisma/client";
-import { booleanArg, extendType, nullable, objectType, stringArg } from "nexus";
+import { booleanArg, extendType, idArg, intArg, nonNull, nullable, objectType, stringArg } from "nexus";
 import { Paypal } from ".";
 import { AwsFileUploader } from "../aws/s3/s3-upload";
 import { Context } from "../context";
@@ -99,4 +99,34 @@ export const UserQuery = extendType({
         })
         ;
     },
+});
+
+export const UserMutation = extendType({
+    type: "Mutation",
+    definition(t) {
+        t.field("verifyEmail", {
+            type: "User",
+            args: {
+                id: nonNull(idArg()),
+            },
+            // @ts-ignore
+            async resolve(parent, args, context: Context) {
+                const { prisma } = context;
+                const { id } = args;
+                
+                const user = await prisma.user.update({
+                    where: {
+                        id
+                    },
+                    data: {
+                        emailVerified: true
+                    }
+                });
+                
+
+                return user;
+            }
+        });
+
+    }
 });

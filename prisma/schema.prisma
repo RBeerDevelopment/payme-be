@@ -16,18 +16,19 @@ generator client {
 }
 
 model User {
-  id           Int       @id @default(autoincrement())
-  firstName    String
-  lastName     String
-  username     String    @unique
-  email        String    @unique
-  passwordHash String
-  lastSignin   DateTime  @default(now())
-  createdAt    DateTime  @default(now())
-  avatarPath   String?
-  sepa         Sepa[]
-  Paypal       Paypal[]
-  Payment      Payment[]
+  id            Int       @id @default(autoincrement())
+  firstName     String
+  lastName      String
+  username      String    @unique
+  email         String    @unique
+  passwordHash  String
+  lastSignin    DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+  avatarPath    String?
+  emailVerified Boolean   @default(false)
+  sepa          Sepa[]
+  Paypal        Paypal[]
+  Payment       Payment[]
 }
 
 model Sepa {
@@ -49,8 +50,8 @@ model Paypal {
   user        User?  @relation(fields: [userId], references: [id])
   userId      Int?
 
-  @@index([userId])
 
+  @@index([userId])
 }
 
 model Payment {
@@ -64,8 +65,8 @@ model Payment {
   createdAt   DateTime @default(now())
   userId      Int
 
-  @@index([userId])
 
+  @@index([userId])
 }
 
 enum Currency {
