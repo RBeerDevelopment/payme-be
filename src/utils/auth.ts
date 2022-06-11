@@ -4,7 +4,7 @@ import { verify } from "jsonwebtoken";
 export const APP_SECRET: string = process.env.APP_SECRET || "";
 
 export interface AuthTokenPayload {
-    userId: number
+    userId: string
 }
 
 export function decodeAuthHeader(authHeader: string): AuthTokenPayload {

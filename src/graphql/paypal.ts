@@ -7,7 +7,7 @@ import { User } from "./user";
 export const Paypal = objectType({
     name: "Paypal",
     definition(t) {
-        t.nonNull.int("id");
+        t.nonNull.string("id");
         t.nonNull.string("username");
         t.nonNull.string("accountName");
         t.nonNull.field("user", { 
@@ -60,7 +60,7 @@ export const PaypalMutation = extendType({
         t.field("updatePaypal", {
             type: "Paypal",
             args: {
-                id: nonNull(intArg()),
+                id: nonNull(stringArg()),
                 accountName: nullable(stringArg()),
                 username: nullable(stringArg())
             },
@@ -87,7 +87,7 @@ export const PaypalMutation = extendType({
         t.field("deletePaypal", {
             type: "Paypal",
             args: {
-                id: nonNull(intArg())
+                id: nonNull(stringArg())
             },
             async resolve(parent, args, context: Context) {
                 const { prisma, userId } = context;
@@ -106,7 +106,7 @@ export const PaypalMutation = extendType({
     },
 });
 
-async function hasAccess(userId: number | undefined, paypalId?: number, prisma?: PrismaClient): Promise<boolean> {
+async function hasAccess(userId: string, paypalId?: string, prisma?: PrismaClient): Promise<boolean> {
 
     if(!userId) {
         throw new Error("User not signed in.");

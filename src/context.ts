@@ -6,7 +6,7 @@ export const prisma = new PrismaClient();
 
 export interface Context {
     prisma: PrismaClient
-    userId?: number
+    userId?: string
 }
 
 export function context({ req }: { req: Request }): Context {

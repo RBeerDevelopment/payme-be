@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Payment as PrismaPayment, User as PrismaUser } from "@prisma/client";
-import { booleanArg, extendType, idArg, intArg, nonNull, nullable, objectType, stringArg } from "nexus";
+import { booleanArg, extendType, nonNull, nullable, objectType, stringArg } from "nexus";
 import { Paypal } from ".";
 import { AwsFileUploader } from "../aws/s3/s3-upload";
 import { Context } from "../context";
@@ -10,7 +10,7 @@ import { Sepa } from "./sepa";
 export const User = objectType({
     name: "User",
     definition(t) {
-        t.nonNull.id("id");
+        t.nonNull.string("id");
         t.nonNull.string("email");
         t.nonNull.string("username");
         t.nonNull.string("firstName");
@@ -19,23 +19,25 @@ export const User = objectType({
         t.nonNull.field("createdAt", {type: "DateTime"});    
         t.nonNull.list.field("sepa", { 
             type: Sepa,
+            // @ts-ignore
             resolve(parent, args, context: Context) {
                 return context.prisma.sepa.findMany({
-                    where: { userId: parseInt(parent.id) }
+                    where: { userId: parent.id }
                 });
             }
         }); 
         t.nonNull.list.field("paypal", {
             type: Paypal,
+            // @ts-ignore
             resolve(parent, args, context: Context) {
                 return context.prisma.paypal.findMany({
-                    where: { userId: parseInt(parent.id) }
+                    where: { userId: parent.id }
                 });
             }
         });
         t.nullable.string("avatarUrl", { async resolve(parent, args, context: Context) {
             const user = await context.prisma.user.findUnique({
-                where: { id: parseInt(parent.id) }
+                where: { id: parent.id }
             });
             const awsFileClient = new AwsFileUploader();
             if(!user?.avatarPath) {
@@ -107,7 +109,7 @@ export const UserMutation = extendType({
         t.field("verifyEmail", {
             type: "User",
             args: {
-                id: nonNull(idArg()),
+                id: nonNull(stringArg()),
             },
             // @ts-ignore
             async resolve(parent, args, context: Context) {

@@ -9,7 +9,7 @@ import { Currency } from "./currency";
 export const Payment = objectType({
     name: "Payment",
     definition(t) {
-        t.nonNull.int("id");
+        t.nonNull.string("id");
         t.nonNull.string("name");
         t.nullable.string("description");
         t.nonNull.float("amount");
@@ -46,12 +46,12 @@ export const PaymentQuery = extendType({
     definition(t) {
         t.nullable.field("payment", {
             type: "Payment",
-            args: { id: intArg() },
+            args: { id: stringArg() },
             // @ts-ignore
             resolve(parent, args, { prisma }: Context) {
 
                 const { id } = args;
-                return prisma.payment.findUnique({ where: { id: id || undefined }});
+                return prisma.payment.findUnique({ where: { id: id }});
             },
         });
     },

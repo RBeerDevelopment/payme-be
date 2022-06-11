@@ -18,6 +18,7 @@
     "@dicebear/avatars": "^4.10.2",
     "@dicebear/avatars-bottts-sprites": "^4.10.2",
     "@prisma/client": "^3.9.2",
+    "@types/node": "^17.0.39",
     "apollo-server": "^3.6.7",
     "apollo-server-core": "^3.6.7",
     "bcryptjs": "^2.4.3",

@@ -7,7 +7,7 @@ import { User } from "./user";
 export const Sepa = objectType({
     name: "Sepa",
     definition(t) {
-        t.nonNull.int("id");
+        t.nonNull.string("id");
         t.nonNull.string("iban");
         t.nonNull.string("bic");
         t.nonNull.string("bankName");
@@ -68,7 +68,7 @@ export const SepaMutation = extendType({
         t.field("updateSepa", {
             type: "Sepa",
             args: {
-                id: nonNull(intArg()),
+                id: nonNull(stringArg()),
                 accountName: nullable(stringArg()),
                 iban: nullable(stringArg()),
                 bic: nullable(stringArg()),
@@ -119,7 +119,7 @@ export const SepaMutation = extendType({
         t.field("deleteSepa", {
             type: "Sepa",
             args: {
-                id: nonNull(intArg())
+                id: nonNull(stringArg())
             },
             async resolve(parent, args, context: Context) {
                 const { prisma, userId } = context;
@@ -138,7 +138,8 @@ export const SepaMutation = extendType({
     },
 });
 
-async function hasAccess(userId: number | undefined, sepaId?: number, prisma?: PrismaClient): Promise<boolean> {
+
+async function hasAccess(userId?: string, sepaId?: string, prisma?: PrismaClient): Promise<boolean> {
 
     if(!userId) {
         throw new Error("User not signed in.");
